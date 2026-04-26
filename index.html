@@ -570,7 +570,6 @@ async function init() {
 
   if (gamesRes.status === 'fulfilled' && gamesRes.value.ok) {
     try { gamesData = await gamesRes.value.json();
-    debugGamesData();
     debugGamesData(); }
     catch(e) { showError(`Could not parse games_info.json: ${e.message}`); }
   } else {
@@ -670,20 +669,20 @@ function parseNhlCondensed(doc) {
   doc.querySelectorAll('a.nhl-c-card-wrap[href*="condensed-games"]').forEach(a => {
     const relHref = a.getAttribute('href') || '';
     if (!relHref) return;
-    href = relHref.startsWith('http') ? relHref : NHL_URL + relHref;
+    let href = relHref.startsWith('http') ? relHref : NHL_URL + relHref;
     if (condensed.find(c => c.href === href)) return;
 
     // Slug: /condensed-games/tbl-at-mtl-condensed-game-XXXX
     const slugMatch = relHref.match(/condensed-games\/([a-z]+)-at-([a-z]+)-condensed/);
     if (!slugMatch) return;
 
-    away = ABBR_TO_TEAM[slugMatch[1]] || slugMatch[1].toUpperCase();
-    home = ABBR_TO_TEAM[slugMatch[2]] || slugMatch[2].toUpperCase();
+    let away = ABBR_TO_TEAM[slugMatch[1]] || slugMatch[1].toUpperCase();
+    let home = ABBR_TO_TEAM[slugMatch[2]] || slugMatch[2].toUpperCase();
 
     // Read the visible display text e.g. "Apr 21, 2026" rather than the datetime
     // attribute which is UTC and can roll over to the next calendar day for late games.
     const timeEl  = a.querySelector('time[datetime]');
-    dateIso = timeEl ? parseNhlDisplayDate(timeEl.textContent.trim()) : null;
+    let dateIso = timeEl ? parseNhlDisplayDate(timeEl.textContent.trim()) : null;
 
     condensed.push({ href, away, home, dateIso });
   });
@@ -691,11 +690,11 @@ function parseNhlCondensed(doc) {
 
 // ─── NHL.com game recaps ──────────────────────────────────────────
 function parseNhlRecaps(doc) {
-    added = 0, dupes = 0;
+    let added = 0, dupes = 0;
   doc.querySelectorAll('a.nhl-c-card-wrap[href*="game-recaps"]').forEach(a => {
-    relHref = a.getAttribute('href') || '';
+    let relHref = a.getAttribute('href') || '';
     if (!relHref) return;
-    href = relHref.startsWith('http') ? relHref : NHL_URL + relHref;
+    let href = relHref.startsWith('http') ? relHref : NHL_URL + relHref;
     if (recaps.find(r => r.href === href)) { dupes++; return; }
 
     // Slug: /game-recaps/tbl-at-mtl-recap-XXXX
@@ -831,7 +830,7 @@ function renderResults() {
   const showWatched = document.getElementById('toggle-watched').checked;
 
   // Log current filter state
-  const selectedTeam = document.getElementById('team-select').value;
+  let selectedTeam = document.getElementById('team-select').value;
   console.log('[FILTER] Team filter: "' + (selectedTeam || 'none') + '" | Show TBD: ' + showTbd + ' | Show watched: ' + showWatched);
   
   // Count games before filter
