@@ -8,62 +8,79 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg:         #0b0e14;
-      --surface:    #12161f;
-      --border:     #1e2536;
-      --ice:        #c8dff0;
-      --ice-dim:    #6d9ab5;
-      --gold:       #e8c94a;
-      --gold-dim:   #7a6820;
-      --green:      #4caf7d;
-      --green-dim:  #2a6647;
-      --green-bg:   #0d2318;
-      --nhl-red:    #c8102e;
-      --nhl-red-dim:#6a0917;
-      --muted:      #4a5a6e;
-      --tbd-text:   #364455;
-      --text:       #dce6f0;
-      --radius:     4px;
+      --bg:          #0b0e14;
+      --surface:     #12161f;
+      --border:      #1e2536;
+      --ice:         #c8dff0;
+      --ice-dim:     #6d9ab5;
+      --gold:        #e8c94a;
+      --gold-dim:    #7a6820;
+      --green:       #4caf7d;
+      --green-dim:   #2a6647;
+      --green-bg:    #0d2318;
+      --nhl-red:     #c8102e;
+      --nhl-red-dim: #6a0917;
+      --purple:      #9b72cf;
+      --purple-dim:  #4a2d75;
+      --muted:       #4a5a6e;
+      --tbd-text:    #364455;
+      --text:        #dce6f0;
+      --radius:      4px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-weight: 300;
-      min-height: 100vh;
-      line-height: 1.6;
+      background: var(--bg); color: var(--text);
+      font-family: 'IBM Plex Sans', sans-serif; font-weight: 300;
+      min-height: 100vh; line-height: 1.6;
     }
 
     /* ── HEADER ───────────────────────────────────── */
     header {
       border-bottom: 1px solid var(--border);
-      padding: 1.75rem 2.5rem 1.25rem;
-      position: relative;
-      overflow: hidden;
+      padding: 1.5rem 2.5rem 1.25rem;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+      position: relative; overflow: hidden;
     }
     header::before {
-      content: '';
-      position: absolute; inset: 0;
+      content: ''; position: absolute; inset: 0;
       background: repeating-linear-gradient(
         90deg, transparent, transparent 60px,
         rgba(200,223,240,0.015) 60px, rgba(200,223,240,0.015) 61px
       );
       pointer-events: none;
     }
+    .header-left {}
     .site-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: clamp(2rem, 5vw, 3rem);
-      letter-spacing: 0.06em; line-height: 1;
-      color: var(--ice);
+      letter-spacing: 0.06em; line-height: 1; color: var(--ice);
     }
     .site-title span { color: var(--gold); }
     .site-subtitle {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.65rem; color: var(--muted);
-      letter-spacing: 0.1em; text-transform: uppercase;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase;
       margin-top: 0.3rem;
     }
+    .header-right {
+      display: flex; flex-direction: column; gap: 0.35rem;
+      align-items: flex-end; padding-bottom: 0.1rem;
+    }
+    .season-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+    }
+    .season-select {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--ice);
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      padding: 0.3rem 2rem 0.3rem 0.7rem; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a5a6e' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 0.6rem center;
+      cursor: pointer; transition: border-color 0.15s;
+    }
+    .season-select:focus { outline: none; border-color: var(--ice-dim); }
 
     /* ── MAIN ─────────────────────────────────────── */
     main { max-width: 1000px; margin: 0 auto; padding: 1.75rem 2rem 4rem; }
@@ -77,8 +94,7 @@
     .spinner {
       display: inline-block; width: 22px; height: 22px;
       border: 2px solid var(--border); border-top-color: var(--gold);
-      border-radius: 50%; animation: spin 0.8s linear infinite;
-      margin-bottom: 1rem;
+      border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     #app { display: none; }
@@ -90,9 +106,8 @@
     }
     .field-group { display: flex; flex-direction: column; gap: 0.35rem; }
     .field-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.62rem; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--muted);
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
     }
     select, input[type="text"] {
       background: var(--surface); border: 1px solid var(--border);
@@ -112,14 +127,15 @@
       margin-bottom: 1.5rem; align-items: center;
     }
     .toggle-label {
-      display: flex; align-items: center; gap: 0.45rem;
-      cursor: pointer; font-size: 0.8rem; color: var(--ice-dim); user-select: none;
+      display: flex; align-items: center; gap: 0.45rem; cursor: pointer;
+      font-size: 0.8rem; color: var(--ice-dim); user-select: none;
     }
-    .toggle-label input[type="checkbox"] { accent-color: var(--gold); width: 14px; height: 14px; cursor: pointer; }
+    .toggle-label input[type="checkbox"] {
+      accent-color: var(--gold); width: 14px; height: 14px; cursor: pointer;
+    }
     .clear-checks {
-      margin-left: auto;
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
-      letter-spacing: 0.08em; text-transform: uppercase;
+      margin-left: auto; font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
       background: none; border: 1px solid var(--border); border-radius: var(--radius);
       color: var(--muted); padding: 0.28rem 0.7rem; cursor: pointer;
       transition: color 0.12s, border-color 0.12s;
@@ -190,7 +206,7 @@
     .card-matchup {
       font-size: 0.95rem; font-weight: 600; color: var(--ice); line-height: 1.3;
     }
-    .game-card.is-tbd    .card-matchup { color: var(--tbd-text); }
+    .game-card.is-tbd     .card-matchup { color: var(--tbd-text); }
     .game-card.is-watched .card-matchup { color: var(--green-dim); }
     .card-meta {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.63rem;
@@ -202,61 +218,72 @@
       padding: 0.18rem 0.5rem; border-radius: 2px;
       white-space: nowrap; flex-shrink: 0; align-self: flex-start;
     }
-    .badge-available { background: #0d1f1a; color: var(--green);   border: 1px solid var(--green-dim); }
-    .badge-watched   { background: #0a1a10; color: #2d7a50;         border: 1px solid #1a4030; }
-    .badge-tbd       { background: #111620; color: var(--muted);    border: 1px solid var(--border); }
+    .badge-available { background: #0d1f1a; color: var(--green);  border: 1px solid var(--green-dim); }
+    .badge-watched   { background: #0a1a10; color: #2d7a50;        border: 1px solid #1a4030; }
+    .badge-tbd       { background: #111620; color: var(--muted);   border: 1px solid var(--border); }
 
     /* ── CARD LINKS ROW ───────────────────────────── */
     .card-links {
-      display: flex; flex-wrap: wrap; gap: 0.4rem;
-      padding: 0 0.85rem 0.65rem; align-items: center;
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      padding: 0 0.85rem 0.7rem; align-items: center;
     }
     .links-group {
-      display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center;
+      display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center;
     }
     .links-group-label {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem;
       color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
-      margin-right: 0.1rem; white-space: nowrap;
+      white-space: nowrap;
     }
 
-    /* 720pier download buttons - gold */
+    /* 720pier - gold */
     .dl-btn {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
-      letter-spacing: 0.05em; color: var(--gold); text-decoration: none;
-      padding: 0.2rem 0.55rem; border: 1px solid var(--gold-dim);
-      border-radius: 2px; background: none;
+      letter-spacing: 0.04em; color: var(--gold); text-decoration: none;
+      padding: 0.22rem 0.6rem; border: 1px solid var(--gold-dim);
+      border-radius: 2px; background: rgba(232,201,74,0.06);
       transition: background 0.1s, color 0.1s; white-space: nowrap;
     }
     .dl-btn:hover { background: var(--gold); color: #0b0e14; }
 
-    /* NHL.com condensed button - red */
+    /* NHL.com condensed - red */
     .condensed-btn {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
-      letter-spacing: 0.05em; color: #e05070; text-decoration: none;
-      padding: 0.2rem 0.55rem; border: 1px solid var(--nhl-red-dim);
-      border-radius: 2px; background: none;
+      letter-spacing: 0.04em; color: #ff6b7a; text-decoration: none;
+      padding: 0.22rem 0.6rem; border: 1px solid var(--nhl-red-dim);
+      border-radius: 2px; background: rgba(200,16,46,0.1);
       transition: background 0.1s, color 0.1s; white-space: nowrap;
     }
     .condensed-btn:hover { background: var(--nhl-red); color: #fff; }
 
-    /* Search buttons - muted */
+    /* Google - blue */
+    .google-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.04em; color: #6aacff; text-decoration: none;
+      padding: 0.22rem 0.6rem; border: 1px solid #1e3a6e;
+      border-radius: 2px; background: rgba(66,133,244,0.08);
+      transition: background 0.1s, color 0.1s; white-space: nowrap;
+    }
+    .google-btn:hover { background: #4285f4; color: #fff; }
+
+    /* NHL.com search - purple */
+    .nhl-search-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.04em; color: var(--purple); text-decoration: none;
+      padding: 0.22rem 0.6rem; border: 1px solid var(--purple-dim);
+      border-radius: 2px; background: rgba(155,114,207,0.08);
+      transition: background 0.1s, color 0.1s; white-space: nowrap;
+    }
+    .nhl-search-btn:hover { background: var(--purple); color: #fff; }
+
     .link-divider {
       width: 1px; height: 14px; background: var(--border);
-      margin: 0 0.15rem; flex-shrink: 0;
+      margin: 0 0.1rem; flex-shrink: 0; align-self: center;
     }
-    .search-btn {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
-      letter-spacing: 0.05em; color: var(--muted); text-decoration: none;
-      padding: 0.2rem 0.5rem; border: 1px solid var(--border); border-radius: 2px;
-      background: none; transition: color 0.1s, border-color 0.1s; white-space: nowrap;
-    }
-    .search-btn:hover { color: var(--ice-dim); border-color: var(--muted); }
 
     /* ── EMPTY STATE ──────────────────────────────── */
     .placeholder {
-      text-align: center; padding: 3rem 1rem;
-      color: var(--muted); font-size: 0.88rem;
+      text-align: center; padding: 3rem 1rem; color: var(--muted); font-size: 0.88rem;
     }
     .placeholder .icon { font-size: 2.2rem; display: block; margin-bottom: 0.6rem; opacity: 0.35; }
 
@@ -270,8 +297,9 @@
     footer a { color: var(--muted); text-decoration: none; }
     footer a:hover { color: var(--ice-dim); }
 
-    @media (max-width: 620px) {
-      header { padding: 1.25rem 1rem 1rem; }
+    @media (max-width: 660px) {
+      header { padding: 1.25rem 1rem 1rem; flex-direction: column; align-items: flex-start; }
+      .header-right { align-items: flex-start; }
       main { padding: 1.25rem 1rem 3rem; }
       .controls { grid-template-columns: 1fr; }
       .card-top { grid-template-columns: auto 1fr; }
@@ -282,9 +310,16 @@
 <body>
 
 <header>
-  <div>
+  <div class="header-left">
     <div class="site-title">NHL <span>Game</span> Browser</div>
-    <div class="site-subtitle">2025–26 Playoffs · 720pier downloads · NHL.com condensed · Track what you've watched</div>
+    <div class="site-subtitle">720pier downloads · NHL.com condensed · Track what you've watched</div>
+  </div>
+  <div class="header-right">
+    <span class="season-label">Season</span>
+    <select class="season-select" id="season-select">
+      <option value="2025-26">2025–26 Playoffs</option>
+      <!-- Add future seasons here -->
+    </select>
   </div>
 </header>
 
@@ -384,43 +419,20 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
-//  NHL TEAM ABBREVIATION MAP
-//  Used to decode NHL.com condensed game slugs like "tbl-at-mtl"
+//  ABBR → FULL TEAM NAME  (for NHL.com condensed game slug decoding)
 // ═══════════════════════════════════════════════════════════════════
 const ABBR_TO_TEAM = {
-  ana: 'Anaheim Ducks',
-  ari: 'Arizona Coyotes',
-  bos: 'Boston Bruins',
-  buf: 'Buffalo Sabres',
-  cgy: 'Calgary Flames',
-  car: 'Carolina Hurricanes',
-  chi: 'Chicago Blackhawks',
-  col: 'Colorado Avalanche',
-  cbj: 'Columbus Blue Jackets',
-  dal: 'Dallas Stars',
-  det: 'Detroit Red Wings',
-  edm: 'Edmonton Oilers',
-  fla: 'Florida Panthers',
-  lak: 'Los Angeles Kings',
-  min: 'Minnesota Wild',
-  mtl: 'Montréal Canadiens',
-  nsh: 'Nashville Predators',
-  njd: 'New Jersey Devils',
-  nyi: 'New York Islanders',
-  nyr: 'New York Rangers',
-  ott: 'Ottawa Senators',
-  phi: 'Philadelphia Flyers',
-  pit: 'Pittsburgh Penguins',
-  sjs: 'San Jose Sharks',
-  sea: 'Seattle Kraken',
-  stl: 'St. Louis Blues',
-  tbl: 'Tampa Bay Lightning',
-  tor: 'Toronto Maple Leafs',
-  uta: 'Utah Mammoth',
-  van: 'Vancouver Canucks',
-  vgk: 'Vegas Golden Knights',
-  wsh: 'Washington Capitals',
-  wpg: 'Winnipeg Jets',
+  ana:'Anaheim Ducks', ari:'Arizona Coyotes', bos:'Boston Bruins',
+  buf:'Buffalo Sabres', cgy:'Calgary Flames', car:'Carolina Hurricanes',
+  chi:'Chicago Blackhawks', col:'Colorado Avalanche', cbj:'Columbus Blue Jackets',
+  dal:'Dallas Stars', det:'Detroit Red Wings', edm:'Edmonton Oilers',
+  fla:'Florida Panthers', lak:'Los Angeles Kings', min:'Minnesota Wild',
+  mtl:'Montréal Canadiens', nsh:'Nashville Predators', njd:'New Jersey Devils',
+  nyi:'New York Islanders', nyr:'New York Rangers', ott:'Ottawa Senators',
+  phi:'Philadelphia Flyers', pit:'Pittsburgh Penguins', sjs:'San Jose Sharks',
+  sea:'Seattle Kraken', stl:'St. Louis Blues', tbl:'Tampa Bay Lightning',
+  tor:'Toronto Maple Leafs', uta:'Utah Mammoth', van:'Vancouver Canucks',
+  vgk:'Vegas Golden Knights', wsh:'Washington Capitals', wpg:'Winnipeg Jets',
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -432,19 +444,20 @@ const LIST_FILE   = 'html_list.json';
 const GAMES_FILE  = 'games_info.json';
 const STORAGE_KEY = 'nhl_watched_games';
 
-let gamesData   = null;
-let forumPosts  = [];    // 720pier posts: { title, href, topicId, away, home, dateIso, btnLabel, isCondensed }
-let condensed   = [];    // NHL.com condensed: { href, away, home, dateIso }
-let watchedSet  = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+let gamesData  = null;
+let forumPosts = [];  // 720pier: { title,href,topicId,away,home,dateIso,btnLabel,isCondensed }
+let condensed  = [];  // NHL.com:  { href,away,home,dateIso }
+let watchedSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
 
 // ═══════════════════════════════════════════════════════════════════
 //  BOOT
 // ═══════════════════════════════════════════════════════════════════
 async function init() {
   setLoaderText('Loading game schedule…');
+
   const [gamesRes, listRes] = await Promise.allSettled([
     fetch(GAMES_FILE),
-    fetch(LIST_FILE)
+    fetch(LIST_FILE),
   ]);
 
   if (gamesRes.status === 'fulfilled' && gamesRes.value.ok) {
@@ -465,7 +478,7 @@ async function init() {
       showError(`Could not parse html_list.json: ${e.message}`);
     }
   } else {
-    showError('Could not load html_list.json — links will not be available.');
+    showError('Could not load html_list.json — download links will not be available.');
   }
 
   showApp();
@@ -473,9 +486,7 @@ async function init() {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-//  DETECT AND DISPATCH HTML FILES
-//  720pier pages contain a.topictitle
-//  NHL.com pages contain a.nhl-c-card-wrap[href*="condensed-games"]
+//  FILE LOADER — auto-detects 720pier vs NHL.com
 // ═══════════════════════════════════════════════════════════════════
 async function loadHtmlFile(filename) {
   try {
@@ -484,83 +495,70 @@ async function loadHtmlFile(filename) {
     const text = await res.text();
     const doc  = new DOMParser().parseFromString(text, 'text/html');
 
-    const isNhl    = doc.querySelector('a.nhl-c-card-wrap[href*="condensed-games"]') !== null;
-    const is720    = doc.querySelector('a.topictitle') !== null;
-
-    if (isNhl) parseNhlCondensed(doc);
-    if (is720) parse720pier(doc);
+    if (doc.querySelector('a.nhl-c-card-wrap[href*="condensed-games"]')) parseNhlCondensed(doc);
+    if (doc.querySelector('a.topictitle')) parse720pier(doc);
   } catch(e) {
-    console.warn(`Skipping ${filename}: ${e.message}`);
+    console.warn(`Skipping ${filename}:`, e.message);
   }
 }
 
-// ─── 720pier parser ──────────────────────────────────────────────
+// ─── 720pier ─────────────────────────────────────────────────────
 function parse720pier(doc) {
   doc.querySelectorAll('a.topictitle').forEach(a => {
     const rawHref = a.getAttribute('href') || '';
-    const href    = rawHref.startsWith('http')
-      ? rawHref : BASE_URL + rawHref.replace(/^\.\//, '');
-
-    const tid = (href.match(/[?&]t=(\d+)/) || [])[1] || href;
+    const href    = rawHref.startsWith('http') ? rawHref : BASE_URL + rawHref.replace(/^\.\//, '');
+    const tid     = (href.match(/[?&]t=(\d+)/) || [])[1] || href;
     if (forumPosts.find(p => p.topicId === tid)) return;
 
     const title       = a.textContent.trim();
     const isCondensed = /condensed/i.test(title);
-    const parsed      = parse720Title(title);
-    forumPosts.push({ title, href, topicId: tid, isCondensed, ...parsed });
+    forumPosts.push({ title, href, topicId: tid, isCondensed, ...parse720Title(title) });
   });
 }
 
-// Parse "NHL SC 2026 / Round 1 / Game 3 / 24.04.2026 / Team A @ Team B [meta]"
 function parse720Title(title) {
-  const bracketIdx = title.lastIndexOf('[');
-  const meta       = bracketIdx >= 0 ? title.slice(bracketIdx + 1, -1).trim() : '';
-  const body       = bracketIdx >= 0 ? title.slice(0, bracketIdx).trim() : title;
-  const parts      = body.split('/').map(s => s.trim()).filter(Boolean);
-  const matchupStr = parts[parts.length - 1] || '';
-  const atIdx      = matchupStr.indexOf('@');
-  const away       = atIdx >= 0 ? matchupStr.slice(0, atIdx).trim() : '';
-  const home       = atIdx >= 0 ? matchupStr.slice(atIdx + 1).trim() : '';
+  const bi      = title.lastIndexOf('[');
+  const meta    = bi >= 0 ? title.slice(bi + 1, -1).trim() : '';
+  const body    = bi >= 0 ? title.slice(0, bi).trim() : title;
+  const parts   = body.split('/').map(s => s.trim()).filter(Boolean);
+  const mStr    = parts[parts.length - 1] || '';
+  const atIdx   = mStr.indexOf('@');
+  const away    = atIdx >= 0 ? mStr.slice(0, atIdx).trim() : '';
+  const home    = atIdx >= 0 ? mStr.slice(atIdx + 1).trim() : '';
 
+  // Date: DD.MM.YYYY
   const dateRaw = parts.find(p => /\d{2}\.\d{2}\.\d{4}/.test(p)) || '';
   const dm      = dateRaw.match(/(\d{2})\.(\d{2})\.(\d{4})/);
   const dateIso = dm ? `${dm[3]}-${dm[2]}-${dm[1]}` : null;
 
-  // Build quality button label from meta bracket
-  const is4k      = /4k|2160/i.test(meta);
-  const resMatch  = meta.match(/(1080p|720p)/i);
-  const resLabel  = is4k ? '4K' : (resMatch ? resMatch[1] : '?');
-  const isFrench  = /FR\//i.test(meta);
-  const langPfx   = isFrench ? 'FR · ' : '';
-  // Extract network after last comma: "EN/TNT" → "TNT", "FR/TVA SPORTS" → "TVA SPORTS"
-  const netMatch  = meta.match(/(?:EN|FR)\/([^,\]]+)/i);
-  const network   = netMatch ? netMatch[1].trim() : '';
-  const btnLabel  = network ? `${langPfx}${resLabel} · ${network}` : `${langPfx}${resLabel}`;
+  // Quality label
+  const is4k     = /4k|2160/i.test(meta);
+  const resMatch = meta.match(/(1080p|720p)/i);
+  const resLabel = is4k ? '4K' : (resMatch ? resMatch[1] : '?');
+  const isFr     = /\bFR\b/i.test(meta.split(',').pop()); // language prefix in last field
+  const langPfx  = isFr ? 'FR · ' : '';
+  const netMatch = meta.match(/(?:EN|FR)\/([^,\]]+)/i);
+  const network  = netMatch ? netMatch[1].trim() : '';
+  const btnLabel = network ? `${langPfx}${resLabel} · ${network}` : `${langPfx}${resLabel}`;
 
   return { away, home, dateIso, btnLabel, meta };
 }
 
-// ─── NHL.com condensed parser ─────────────────────────────────────
+// ─── NHL.com condensed ────────────────────────────────────────────
 function parseNhlCondensed(doc) {
   doc.querySelectorAll('a.nhl-c-card-wrap[href*="condensed-games"]').forEach(a => {
     const relHref = a.getAttribute('href') || '';
     if (!relHref) return;
     const href = relHref.startsWith('http') ? relHref : NHL_URL + relHref;
-
-    // Deduplicate by full href
     if (condensed.find(c => c.href === href)) return;
 
-    // Slug pattern: /condensed-games/tbl-at-mtl-condensed-game-XXXXXXX
-    // Extract "tbl-at-mtl" portion
+    // Slug: /condensed-games/tbl-at-mtl-condensed-game-XXXX
     const slugMatch = relHref.match(/condensed-games\/([a-z]+)-at-([a-z]+)-condensed/);
     if (!slugMatch) return;
 
-    const awayAbbr = slugMatch[1];
-    const homeAbbr = slugMatch[2];
-    const away     = ABBR_TO_TEAM[awayAbbr] || awayAbbr.toUpperCase();
-    const home     = ABBR_TO_TEAM[homeAbbr] || homeAbbr.toUpperCase();
+    const away = ABBR_TO_TEAM[slugMatch[1]] || slugMatch[1].toUpperCase();
+    const home = ABBR_TO_TEAM[slugMatch[2]] || slugMatch[2].toUpperCase();
 
-    // Date from <time datetime="2026-04-25T02:31:15">
     const timeEl  = a.querySelector('time[datetime]');
     const dateRaw = timeEl ? timeEl.getAttribute('datetime') : null;
     const dateIso = dateRaw ? dateRaw.slice(0, 10) : null;
@@ -570,60 +568,64 @@ function parseNhlCondensed(doc) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-//  MATCH posts/condensed → a game entry
+//  MATCHING  — only match by date when BOTH sides have a date.
+//              If either side has no date, match by teams only AND
+//              require the game's status === 'confirmed' to avoid
+//              phantom matches on TBD placeholder games.
 // ═══════════════════════════════════════════════════════════════════
-function teamContains(candidate, target) {
-  return candidate.toLowerCase().includes(target.toLowerCase()) ||
-         target.toLowerCase().includes(candidate.toLowerCase());
+function teamsMatch(postAway, postHome, gameAway, gameHome) {
+  const pa = postAway.toLowerCase(), ph = postHome.toLowerCase();
+  const ga = gameAway.toLowerCase(), gh = gameHome.toLowerCase();
+  return (pa.includes(ga) || ga.includes(pa)) && (ph.includes(gh) || gh.includes(ph));
 }
 
 function findPostsForGame(game) {
-  const awayL = game.away_team.toLowerCase();
-  const homeL = game.home_team.toLowerCase();
-  const date  = game.date;
-
+  const hasGameDate = Boolean(game.date);
   return forumPosts.filter(p => {
     if (!p.away || !p.home) return false;
-    const teamsMatch =
-      (p.away.toLowerCase().includes(awayL) || awayL.includes(p.away.toLowerCase())) &&
-      (p.home.toLowerCase().includes(homeL) || homeL.includes(p.home.toLowerCase()));
-    const dateMatch = !date || !p.dateIso || p.dateIso === date;
-    return teamsMatch && dateMatch;
+    if (!teamsMatch(p.away, p.home, game.away_team, game.home_team)) return false;
+    // If the game has a known date, the post MUST also have a date AND it must match.
+    // This prevents dateless TBD games from inheriting posts from played games.
+    if (hasGameDate) {
+      return p.dateIso === game.date;
+    } else {
+      // Game has no date (TBD) — only attach posts if the post itself has no date either.
+      // In practice, all 720pier posts have dates, so TBD games will always get 0 posts. ✓
+      return p.dateIso === null;
+    }
   });
 }
 
 function findCondensedForGame(game) {
-  const awayL = game.away_team.toLowerCase();
-  const homeL = game.home_team.toLowerCase();
-  const date  = game.date;
-
+  const hasGameDate = Boolean(game.date);
   return condensed.filter(c => {
-    const awayMatch = c.away.toLowerCase().includes(awayL) || awayL.includes(c.away.toLowerCase());
-    const homeMatch = c.home.toLowerCase().includes(homeL) || homeL.includes(c.home.toLowerCase());
-    // Also try reversed (NHL.com uses game-time home/away which may differ)
-    const swapMatch = c.away.toLowerCase().includes(homeL) && c.home.toLowerCase().includes(awayL);
-    const dateMatch = !date || !c.dateIso || c.dateIso === date;
-    return (awayMatch && homeMatch || swapMatch) && dateMatch;
+    // Allow both orientations (NHL.com may swap home/away vs games_info)
+    const fwd = teamsMatch(c.away, c.home, game.away_team, game.home_team);
+    const rev = teamsMatch(c.away, c.home, game.home_team, game.away_team);
+    if (!fwd && !rev) return false;
+    if (hasGameDate) {
+      return c.dateIso === game.date;
+    } else {
+      return c.dateIso === null;
+    }
   });
 }
 
 // ═══════════════════════════════════════════════════════════════════
 //  FILTER HELPERS
 // ═══════════════════════════════════════════════════════════════════
-function teamTerms() {
+function getTerms() {
   const raw = document.getElementById('team-select').value;
-  return raw ? raw.split('|').map(t => t.toLowerCase()) : [];
-}
-function customTerm() {
-  return document.getElementById('custom-filter').value.trim().toLowerCase();
+  const terms = raw ? raw.split('|').map(t => t.toLowerCase()) : [];
+  const ct = document.getElementById('custom-filter').value.trim().toLowerCase();
+  if (ct) terms.push(ct);
+  return terms;
 }
 function gameMatchesFilter(game) {
-  const terms = [...teamTerms()];
-  const ct    = customTerm();
-  if (ct) terms.push(ct);
+  const terms = getTerms();
   if (terms.length === 0) return true;
-  const haystack = `${game.away_team} ${game.home_team}`.toLowerCase();
-  return terms.some(t => haystack.includes(t));
+  const hay = `${game.away_team} ${game.home_team}`.toLowerCase();
+  return terms.some(t => hay.includes(t));
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -633,17 +635,24 @@ function renderResults() {
   const resultsEl   = document.getElementById('results');
   const showTbd     = document.getElementById('toggle-tbd').checked;
   const showWatched = document.getElementById('toggle-watched').checked;
+  const season      = document.getElementById('season-select').value;
 
   if (!gamesData) {
     resultsEl.innerHTML = `<div class="placeholder"><span class="icon">⚠️</span>games_info.json not loaded.</div>`;
     return;
   }
 
-  const season = gamesData.seasons.find(s => s.season === '2025-26');
-  if (!season) { resultsEl.innerHTML = `<div class="placeholder"><span class="icon">⚠️</span>No 2025-26 season found.</div>`; return; }
+  const seasonData = gamesData.seasons.find(s => s.season === season);
+  if (!seasonData) {
+    resultsEl.innerHTML = `<div class="placeholder"><span class="icon">⚠️</span>Season ${season} not found in games_info.json.</div>`;
+    return;
+  }
 
-  const playoffs = season.stages.find(s => s.stage === 'playoffs');
-  if (!playoffs) { resultsEl.innerHTML = `<div class="placeholder"><span class="icon">⚠️</span>No playoffs stage found.</div>`; return; }
+  const playoffs = seasonData.stages.find(s => s.stage === 'playoffs');
+  if (!playoffs) {
+    resultsEl.innerHTML = `<div class="placeholder"><span class="icon">⚠️</span>No playoffs data for this season.</div>`;
+    return;
+  }
 
   let totalShown = 0, totalWatched = 0;
   const html = [];
@@ -657,12 +666,17 @@ function renderResults() {
       series.games.forEach(game => {
         if (!gameMatchesFilter(game)) return;
 
+        // Find matching posts — strict date matching prevents phantom links
         const posts720   = findPostsForGame(game).filter(p => !p.isCondensed);
         const condenseds = findCondensedForGame(game);
         const hasLinks   = posts720.length > 0 || condenseds.length > 0;
-        const isTbd      = game.status === 'tbd' && !hasLinks;
-        const gameKey    = `${series.series_id}_g${game.game_number}`;
-        const isWatched  = watchedSet.has(gameKey);
+
+        // A game is TBD if: no known date + no matching posts (truly unplayed)
+        // OR: date is in the future and genuinely status===tbd and no posts found
+        const isTbd = !hasLinks && game.status === 'tbd';
+
+        const gameKey   = `${series.series_id}_g${game.game_number}`;
+        const isWatched = watchedSet.has(gameKey);
 
         if (!showTbd && isTbd) return;
         if (!showWatched && isWatched) return;
@@ -673,7 +687,7 @@ function renderResults() {
 
     if (roundItems.length === 0) return;
 
-    // Oldest first
+    // Oldest first within round
     roundItems.sort((a, b) => {
       const da = a.game.date ? new Date(a.game.date).getTime() : Infinity;
       const db = b.game.date ? new Date(b.game.date).getTime() : Infinity;
@@ -709,51 +723,49 @@ function renderResults() {
         else if (isTbd) { badgeHtml = 'Not posted'; badgeClass = 'badge-tbd'; }
         else            { badgeHtml = 'Available';  badgeClass = 'badge-available'; }
 
-        // ── 720pier quality buttons (deduplicated by label) ──
+        // 720pier buttons (deduplicated by label)
         const seenLabels = new Set();
         const dlButtons = posts720
           .filter(p => { if (seenLabels.has(p.btnLabel)) return false; seenLabels.add(p.btnLabel); return true; })
-          .map(p => `<a class="dl-btn" href="${escHtml(p.href)}" target="_blank" rel="noopener">${escHtml(p.btnLabel)}</a>`)
+          .map(p => `<a class="dl-btn" href="${esc(p.href)}" target="_blank" rel="noopener">${esc(p.btnLabel)}</a>`)
           .join('');
 
-        // ── NHL.com condensed buttons (deduplicated by href) ──
-        const condensedButtons = condenseds
-          .map(c => `<a class="condensed-btn" href="${escHtml(c.href)}" target="_blank" rel="noopener">Condensed · NHL.com</a>`)
+        // NHL.com condensed buttons
+        const condensedBtns = condenseds
+          .map(c => `<a class="condensed-btn" href="${esc(c.href)}" target="_blank" rel="noopener">▶ Condensed · NHL.com</a>`)
           .join('');
 
-        // ── Search links ──
-        const searchQ  = encodeURIComponent(`${matchup} NHL 2026`);
-        const nhlQ     = encodeURIComponent(matchup);
-        const gSearch  = `https://www.google.com/search?q=${searchQ}`;
-        const nhlSrch  = `https://www.nhl.com/search/?query=${nhlQ}`;
+        // Search links
+        const gQ   = encodeURIComponent(`${matchup} NHL 2026`);
+        const nhlQ = encodeURIComponent(matchup);
 
-        // ── Build links row ──
         let linksHtml = '';
         if (hasLinks || !isTbd) {
-          const parts = [];
+          const groups = [];
           if (dlButtons) {
-            parts.push(`<div class="links-group"><span class="links-group-label">720pier:</span>${dlButtons}</div>`);
+            groups.push(`<div class="links-group"><span class="links-group-label">720pier:</span>${dlButtons}</div>`);
           }
-          if (condensedButtons) {
-            parts.push(`<div class="links-group"><span class="links-group-label">Condensed:</span>${condensedButtons}</div>`);
+          if (condensedBtns) {
+            groups.push(`<div class="links-group">${condensedBtns}</div>`);
           }
-          parts.push(`<div class="links-group" style="margin-left:auto">
-            <div class="link-divider"></div>
-            <a class="search-btn" href="${gSearch}"  target="_blank" rel="noopener">Google ↗</a>
-            <a class="search-btn" href="${nhlSrch}" target="_blank" rel="noopener">NHL.com ↗</a>
-          </div>`);
-          linksHtml = `<div class="card-links">${parts.join('')}</div>`;
+          groups.push(`
+            <div class="links-group" style="margin-left:auto">
+              <div class="link-divider"></div>
+              <a class="google-btn"     href="https://www.google.com/search?q=${gQ}"     target="_blank" rel="noopener">Google ↗</a>
+              <a class="nhl-search-btn" href="https://www.nhl.com/search/?query=${nhlQ}" target="_blank" rel="noopener">NHL.com ↗</a>
+            </div>`);
+          linksHtml = `<div class="card-links">${groups.join('')}</div>`;
         }
 
         html.push(`
           <div class="game-card${isTbd ? ' is-tbd' : ''}${isWatched ? ' is-watched' : ''}" style="animation-delay:${Math.min(idx*12,200)}ms">
             <div class="card-top">
-              <input type="checkbox" class="watch-check" data-key="${escHtml(gameKey)}"
+              <input type="checkbox" class="watch-check" data-key="${esc(gameKey)}"
                 ${isWatched ? 'checked' : ''} ${isTbd ? 'disabled' : ''} title="Mark as watched" />
               <div class="card-info">
-                <div class="card-date">Game ${game.game_number} · ${escHtml(dateLabel)}</div>
-                <div class="card-matchup">${escHtml(matchup)}</div>
-                <div class="card-meta">${escHtml(round.round_label)} · ${escHtml(series.series_id)}</div>
+                <div class="card-date">Game ${game.game_number} · ${esc(dateLabel)}</div>
+                <div class="card-matchup">${esc(matchup)}</div>
+                <div class="card-meta">${esc(round.round_label)} · ${esc(series.series_id)}</div>
               </div>
               <span class="card-badge ${badgeClass}">${badgeHtml}</span>
             </div>
@@ -770,35 +782,29 @@ function renderResults() {
     resultsEl.querySelectorAll('.watch-check').forEach(cb => {
       cb.addEventListener('change', e => {
         const key = e.target.dataset.key;
-        if (e.target.checked) watchedSet.add(key);
-        else watchedSet.delete(key);
-        saveWatched();
-        renderResults();
+        if (e.target.checked) watchedSet.add(key); else watchedSet.delete(key);
+        saveWatched(); renderResults();
       });
     });
   }
 
   const filterLabel = document.getElementById('team-select').value
-    ? (document.querySelector('#team-select option:checked')?.textContent || '')
-    : (customTerm() || 'all teams');
+    ? (document.querySelector('#team-select option:checked')?.textContent?.trim() || '')
+    : (document.getElementById('custom-filter').value.trim() || 'all teams');
 
   document.getElementById('status-left').innerHTML =
-    `Showing <span class="hl">${totalShown}</span> game(s) · ${filterLabel} · ` +
+    `Showing <span class="hl">${totalShown}</span> game(s) · ${esc(filterLabel)} · ` +
     `${forumPosts.length} 720pier posts · ${condensed.length} NHL.com condensed indexed`;
   document.getElementById('status-right').innerHTML =
     totalWatched > 0 ? `<span class="grn">✓ ${totalWatched} watched</span>` : '';
 }
 
 // ═══════════════════════════════════════════════════════════════════
-//  PERSISTENCE + HELPERS
+//  HELPERS
 // ═══════════════════════════════════════════════════════════════════
-function saveWatched() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([...watchedSet]));
-}
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function saveWatched() { localStorage.setItem(STORAGE_KEY, JSON.stringify([...watchedSet])); }
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function setLoaderText(msg) { document.getElementById('loader-text').textContent = msg; }
 function showApp() {
@@ -813,13 +819,12 @@ function showError(html) {
 //  EVENT LISTENERS
 // ═══════════════════════════════════════════════════════════════════
 document.getElementById('team-select').addEventListener('change', () => {
-  document.getElementById('custom-filter').value = '';
-  renderResults();
+  document.getElementById('custom-filter').value = ''; renderResults();
 });
 document.getElementById('custom-filter').addEventListener('input', () => {
-  document.getElementById('team-select').value = '';
-  renderResults();
+  document.getElementById('team-select').value = ''; renderResults();
 });
+document.getElementById('season-select').addEventListener('change', renderResults);
 ['toggle-tbd','toggle-watched'].forEach(id =>
   document.getElementById(id).addEventListener('change', renderResults)
 );
