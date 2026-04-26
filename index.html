@@ -559,12 +559,24 @@ function parseNhlCondensed(doc) {
     const away = ABBR_TO_TEAM[slugMatch[1]] || slugMatch[1].toUpperCase();
     const home = ABBR_TO_TEAM[slugMatch[2]] || slugMatch[2].toUpperCase();
 
+    // Read the visible display text e.g. "Apr 21, 2026" rather than the datetime
+    // attribute which is UTC and can roll over to the next calendar day for late games.
     const timeEl  = a.querySelector('time[datetime]');
-    const dateRaw = timeEl ? timeEl.getAttribute('datetime') : null;
-    const dateIso = dateRaw ? dateRaw.slice(0, 10) : null;
+    const dateIso = timeEl ? parseNhlDisplayDate(timeEl.textContent.trim()) : null;
 
     condensed.push({ href, away, home, dateIso });
   });
+}
+
+// Convert "Apr 21, 2026" → "2026-04-21"
+function parseNhlDisplayDate(text) {
+  const months = { Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',
+                   Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12' };
+  const m = text.match(/([A-Za-z]{3})\s+(\d{1,2}),\s*(\d{4})/);
+  if (!m) return null;
+  const mon = months[m[1]];
+  if (!mon) return null;
+  return `${m[3]}-${mon}-${m[2].padStart(2, '0')}`;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -599,15 +611,13 @@ function findPostsForGame(game) {
 function findCondensedForGame(game) {
   const hasGameDate = Boolean(game.date);
   return condensed.filter(c => {
-    // Allow both orientations (NHL.com may swap home/away vs games_info)
+    // Allow both orientations (NHL.com may list home/away differently)
     const fwd = teamsMatch(c.away, c.home, game.away_team, game.home_team);
     const rev = teamsMatch(c.away, c.home, game.home_team, game.away_team);
     if (!fwd && !rev) return false;
-    if (hasGameDate) {
-      return c.dateIso === game.date;
-    } else {
-      return c.dateIso === null;
-    }
+    if (!hasGameDate) return c.dateIso === null;
+    if (!c.dateIso) return false;
+    return c.dateIso === game.date;
   });
 }
 
