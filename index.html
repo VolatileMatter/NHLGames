@@ -461,6 +461,45 @@ let watchedSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
 // ═══════════════════════════════════════════════════════════════════
 //  BOOT
 // ═══════════════════════════════════════════════════════════════════
+
+  // DEBUG: Log all loaded games
+  function debugGamesData() {
+    if (!gamesData) { console.log('[DEBUG] No gamesData loaded'); return; }
+    const seasonData = gamesData.seasons.find(s => s.season === '2025-26');
+    if (!seasonData) { console.log('[DEBUG] Season 2025-26 not found'); return; }
+    const playoffs = seasonData.stages.find(s => s.stage === 'playoffs');
+    if (!playoffs) { console.log('[DEBUG] Playoffs stage not found'); return; }
+    
+    console.log('=== GAMES IN games_info.json ===');
+    let totalGames = 0;
+    playoffs.rounds.forEach(round => {
+      round.series.forEach(series => {
+        series.games.forEach(game => {
+          totalGames++;
+          console.log('  Game ' + game.game_number + ': ' + game.away_team + ' @ ' + game.home_team + ' (' + (game.date || 'TBD') + ') [' + game.status + ']');
+        });
+      });
+    });
+    console.log('Total games loaded: ' + totalGames);
+    
+    // Check for Tampa Bay games specifically
+    let tampaGames = [];
+    playoffs.rounds.forEach(round => {
+      round.series.forEach(series => {
+        series.games.forEach(game => {
+          if (game.away_team === 'Tampa Bay Lightning' || game.home_team === 'Tampa Bay Lightning') {
+            tampaGames.push(game.game_number + ': ' + game.away_team + ' @ ' + game.home_team + ' (' + game.date + ')');
+          }
+        });
+      });
+    });
+    if (tampaGames.length > 0) {
+      console.log('✓ Tampa Bay Lightning games found:', tampaGames);
+    } else {
+      console.warn('✗ No Tampa Bay Lightning games found in games_info.json!');
+    }
+  }
+
 async function init() {
   setLoaderText('Loading game schedule…');
 
@@ -470,7 +509,8 @@ async function init() {
   ]);
 
   if (gamesRes.status === 'fulfilled' && gamesRes.value.ok) {
-    try { gamesData = await gamesRes.value.json(); }
+    try { gamesData = await gamesRes.value.json();
+    debugGamesData(); }
     catch(e) { showError(`Could not parse games_info.json: ${e.message}`); }
   } else {
     showError('Could not load games_info.json.');
@@ -632,14 +672,22 @@ function parseNhlDisplayDate(text) {
 // ═══════════════════════════════════════════════════════════════════
 // Normalize accented chars so "Montreal" matches "Montréal" etc.
 function normalizeTeam(s) {
+  if (!s) return '';
   return s.toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z\s]/g, '')
+    .trim();
 }
 function teamsMatch(postAway, postHome, gameAway, gameHome) {
   const pa = normalizeTeam(postAway), ph = normalizeTeam(postHome);
   const ga = normalizeTeam(gameAway), gh = normalizeTeam(gameHome);
-  return (pa.includes(ga) || ga.includes(pa)) && (ph.includes(gh) || gh.includes(ph));
+  const result = (pa.indexOf(ga) !== -1 || ga.indexOf(pa) !== -1) && (ph.indexOf(gh) !== -1 || gh.indexOf(ph) !== -1);
+  if (!result && (pa === ga || ph === gh)) {
+    // Log near misses for debugging
+    console.log('[DEBUG] teamsMatch failed: post(' + pa + ',' + ph + ') game(' + ga + ',' + gh + ')');
+  }
+  return result;
 }
 
 function findPostsForGame(game) {
@@ -689,7 +737,22 @@ function findRecapsForGame(game) {
 // ═══════════════════════════════════════════════════════════════════
 function getTerms() {
   const raw = document.getElementById('team-select').value;
-  return raw ? raw.split('|').map(t => t.toLowerCase()) : [];
+  if (!raw) return [];
+  const terms = raw.split('|').map(function(t) { return t.toLowerCase().trim(); });
+  const normalizedTerms = [];
+  for (let i = 0; i < terms.length; i++) {
+    const term = terms[i];
+    normalizedTerms.push(term);
+    const noAccent = term.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (noAccent !== term) normalizedTerms.push(noAccent);
+  }
+  const unique = [];
+  for (let i = 0; i < normalizedTerms.length; i++) {
+    if (unique.indexOf(normalizedTerms[i]) === -1) {
+      unique.push(normalizedTerms[i]);
+    }
+  }
+  return unique;
 }
 function gameMatchesFilter(game) {
   const terms = getTerms();
@@ -705,6 +768,18 @@ function renderResults() {
   const resultsEl   = document.getElementById('results');
   const showTbd     = document.getElementById('toggle-tbd').checked;
   const showWatched = document.getElementById('toggle-watched').checked;
+
+  // Log current filter state
+  const selectedTeam = document.getElementById('team-select').value;
+  console.log('[FILTER] Team filter: "' + (selectedTeam || 'none') + '" | Show TBD: ' + showTbd + ' | Show watched: ' + showWatched);
+  let totalGamesBeforeFilter = 0;
+  playoffs.rounds.forEach(function(r) {
+    r.series.forEach(function(ser) {
+      totalGamesBeforeFilter += ser.games.length;
+    });
+  });
+  console.log('[FILTER] Total games before filter: ' + totalGamesBeforeFilter);
+
   const season      = document.getElementById('season-select').value;
 
   if (!gamesData) {
