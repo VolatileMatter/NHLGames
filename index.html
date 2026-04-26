@@ -10,23 +10,22 @@
     :root {
       --bg:         #0b0e14;
       --surface:    #12161f;
-      --surface2:   #161c28;
       --border:     #1e2536;
       --ice:        #c8dff0;
       --ice-dim:    #6d9ab5;
       --gold:       #e8c94a;
       --gold-dim:   #7a6820;
       --green:      #4caf7d;
-      --green-bg:   #0d2318;
       --green-dim:  #2a6647;
+      --green-bg:   #0d2318;
+      --nhl-red:    #c8102e;
+      --nhl-red-dim:#6a0917;
       --muted:      #4a5a6e;
       --tbd-text:   #364455;
       --text:       #dce6f0;
       --radius:     4px;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       background: var(--bg);
       color: var(--text);
@@ -36,7 +35,7 @@
       line-height: 1.6;
     }
 
-    /* ── HEADER ──────────────────────────────────────────────── */
+    /* ── HEADER ───────────────────────────────────── */
     header {
       border-bottom: 1px solid var(--border);
       padding: 1.75rem 2.5rem 1.25rem;
@@ -45,8 +44,7 @@
     }
     header::before {
       content: '';
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background: repeating-linear-gradient(
         90deg, transparent, transparent 60px,
         rgba(200,223,240,0.015) 60px, rgba(200,223,240,0.015) 61px
@@ -56,340 +54,225 @@
     .site-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: clamp(2rem, 5vw, 3rem);
-      letter-spacing: 0.06em;
-      line-height: 1;
+      letter-spacing: 0.06em; line-height: 1;
       color: var(--ice);
     }
     .site-title span { color: var(--gold); }
     .site-subtitle {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      font-size: 0.65rem; color: var(--muted);
+      letter-spacing: 0.1em; text-transform: uppercase;
       margin-top: 0.3rem;
     }
 
-    /* ── MAIN ────────────────────────────────────────────────── */
-    main {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 1.75rem 2rem 4rem;
-    }
+    /* ── MAIN ─────────────────────────────────────── */
+    main { max-width: 1000px; margin: 0 auto; padding: 1.75rem 2rem 4rem; }
 
-    /* ── LOADER ──────────────────────────────────────────────── */
+    /* ── LOADER ───────────────────────────────────── */
     #loader {
-      text-align: center;
-      padding: 4rem 1rem;
+      text-align: center; padding: 4rem 1rem;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--muted);
-      letter-spacing: 0.1em;
+      font-size: 0.75rem; color: var(--muted); letter-spacing: 0.1em;
     }
     .spinner {
-      display: inline-block;
-      width: 22px; height: 22px;
-      border: 2px solid var(--border);
-      border-top-color: var(--gold);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      display: inline-block; width: 22px; height: 22px;
+      border: 2px solid var(--border); border-top-color: var(--gold);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
       margin-bottom: 1rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     #app { display: none; }
 
-    /* ── CONTROLS ────────────────────────────────────────────── */
+    /* ── CONTROLS ─────────────────────────────────── */
     .controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      align-items: end;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1rem; margin-bottom: 1rem; align-items: end;
     }
     .field-group { display: flex; flex-direction: column; gap: 0.35rem; }
     .field-label {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
+      font-size: 0.62rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted);
     }
     select, input[type="text"] {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text);
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 0.9rem;
-      padding: 0.55rem 0.85rem;
-      width: 100%;
-      appearance: none;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text);
+      font-family: 'IBM Plex Sans', sans-serif; font-size: 0.9rem;
+      padding: 0.55rem 0.85rem; width: 100%; appearance: none;
       transition: border-color 0.15s;
     }
     select:focus, input[type="text"]:focus { outline: none; border-color: var(--ice-dim); }
     select {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a5a6e' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 0.85rem center;
-      padding-right: 2.4rem;
-      cursor: pointer;
+      background-repeat: no-repeat; background-position: right 0.85rem center;
+      padding-right: 2.4rem; cursor: pointer;
     }
-
     .row-options {
-      display: flex;
-      gap: 1.25rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.5rem;
-      align-items: center;
+      display: flex; gap: 1.25rem; flex-wrap: wrap;
+      margin-bottom: 1.5rem; align-items: center;
     }
     .toggle-label {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      cursor: pointer;
-      font-size: 0.8rem;
-      color: var(--ice-dim);
-      user-select: none;
+      display: flex; align-items: center; gap: 0.45rem;
+      cursor: pointer; font-size: 0.8rem; color: var(--ice-dim); user-select: none;
     }
-    .toggle-label input[type="checkbox"] {
-      accent-color: var(--gold);
-      width: 14px; height: 14px;
-      cursor: pointer;
-    }
+    .toggle-label input[type="checkbox"] { accent-color: var(--gold); width: 14px; height: 14px; cursor: pointer; }
     .clear-checks {
       margin-left: auto;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--muted);
-      padding: 0.28rem 0.7rem;
-      cursor: pointer;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: none; border: 1px solid var(--border); border-radius: var(--radius);
+      color: var(--muted); padding: 0.28rem 0.7rem; cursor: pointer;
       transition: color 0.12s, border-color 0.12s;
     }
     .clear-checks:hover { color: var(--ice-dim); border-color: var(--muted); }
 
-    /* ── STATUS BAR ──────────────────────────────────────────── */
+    /* ── STATUS BAR ───────────────────────────────── */
     .status-bar {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.07em;
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-      padding: 0.45rem 0;
-      margin-bottom: 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.4rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.07em; color: var(--muted);
+      border-top: 1px solid var(--border); padding: 0.45rem 0;
+      margin-bottom: 1.5rem; display: flex;
+      justify-content: space-between; flex-wrap: wrap; gap: 0.4rem;
     }
     .status-bar .hl  { color: var(--gold); font-weight: 600; }
     .status-bar .grn { color: var(--green); }
 
-    /* ── ERROR ───────────────────────────────────────────────── */
+    /* ── ERROR ────────────────────────────────────── */
     .error-box {
-      background: #1a1018;
-      border: 1px solid #5a2030;
-      border-left: 3px solid #d94f4f;
-      border-radius: var(--radius);
-      padding: 0.9rem 1.1rem;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.72rem;
-      color: #e07070;
-      margin-bottom: 1.5rem;
-      line-height: 1.7;
+      background: #1a1018; border: 1px solid #5a2030;
+      border-left: 3px solid #d94f4f; border-radius: var(--radius);
+      padding: 0.9rem 1.1rem; font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem; color: #e07070; margin-bottom: 1.5rem; line-height: 1.7;
     }
 
-    /* ── ROUND HEADER ────────────────────────────────────────── */
+    /* ── ROUND / SERIES HEADERS ───────────────────── */
     .round-header {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.4rem;
-      letter-spacing: 0.1em;
-      color: var(--ice-dim);
-      margin: 2.5rem 0 0.75rem;
-      padding-bottom: 0.4rem;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem;
+      letter-spacing: 0.1em; color: var(--ice-dim);
+      margin: 2.5rem 0 0.75rem; padding-bottom: 0.4rem;
       border-bottom: 1px solid var(--border);
     }
     .round-header:first-child { margin-top: 0; }
-
-    /* ── SERIES HEADER ───────────────────────────────────────── */
     .series-header {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin: 1.5rem 0 0.5rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gold); margin: 1.5rem 0 0.5rem;
     }
 
-    /* ── GAME CARD ───────────────────────────────────────────── */
+    /* ── GAME CARD ────────────────────────────────── */
     .game-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-bottom: 0.4rem;
-      overflow: hidden;
-      transition: border-color 0.12s;
-      animation: fadeIn 0.18s ease both;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); margin-bottom: 0.4rem; overflow: hidden;
+      transition: border-color 0.12s; animation: fadeIn 0.18s ease both;
     }
     .game-card:hover { border-color: var(--ice-dim); }
-    .game-card.is-watched {
-      border-left: 3px solid var(--green-dim);
-      background: #0e1a14;
-    }
-    .game-card.is-tbd {
-      opacity: 0.45;
-    }
+    .game-card.is-watched { border-left: 3px solid var(--green-dim); background: #0e1a14; }
+    .game-card.is-tbd { opacity: 0.42; }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(3px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── CARD TOP ROW ────────────────────────────────────────── */
+    /* ── CARD TOP ROW ─────────────────────────────── */
     .card-top {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.65rem 0.85rem;
+      display: grid; grid-template-columns: auto 1fr auto;
+      align-items: center; gap: 0.75rem; padding: 0.65rem 0.85rem;
     }
-
-    /* Checkbox */
     .watch-check {
-      width: 16px; height: 16px;
-      accent-color: var(--green);
-      cursor: pointer;
-      flex-shrink: 0;
+      width: 16px; height: 16px; accent-color: var(--green);
+      cursor: pointer; flex-shrink: 0;
     }
     .game-card.is-tbd .watch-check { pointer-events: none; opacity: 0.2; }
-
-    /* Date + matchup */
-    .card-info {}
     .card-date {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-      margin-bottom: 0.1rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      color: var(--muted); letter-spacing: 0.06em; margin-bottom: 0.1rem;
     }
     .card-matchup {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--ice);
-      line-height: 1.3;
+      font-size: 0.95rem; font-weight: 600; color: var(--ice); line-height: 1.3;
     }
-    .game-card.is-tbd .card-matchup { color: var(--tbd-text); }
+    .game-card.is-tbd    .card-matchup { color: var(--tbd-text); }
     .game-card.is-watched .card-matchup { color: var(--green-dim); }
     .card-meta {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.63rem;
-      color: var(--muted);
-      margin-top: 0.1rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.63rem;
+      color: var(--muted); margin-top: 0.1rem;
     }
-
-    /* Status badge */
     .card-badge {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.18rem 0.5rem;
-      border-radius: 2px;
-      white-space: nowrap;
-      flex-shrink: 0;
-      align-self: flex-start;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.18rem 0.5rem; border-radius: 2px;
+      white-space: nowrap; flex-shrink: 0; align-self: flex-start;
     }
-    .badge-available { background: #0d1f1a; color: var(--green); border: 1px solid var(--green-dim); }
-    .badge-watched   { background: #0a1a10; color: #2d7a50;      border: 1px solid #1a4030; }
-    .badge-tbd       { background: #111620; color: var(--muted);  border: 1px solid var(--border); }
+    .badge-available { background: #0d1f1a; color: var(--green);   border: 1px solid var(--green-dim); }
+    .badge-watched   { background: #0a1a10; color: #2d7a50;         border: 1px solid #1a4030; }
+    .badge-tbd       { background: #111620; color: var(--muted);    border: 1px solid var(--border); }
 
-    /* ── CARD BOTTOM ROW: links ──────────────────────────────── */
+    /* ── CARD LINKS ROW ───────────────────────────── */
     .card-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      padding: 0 0.85rem 0.65rem;
-      align-items: center;
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+      padding: 0 0.85rem 0.65rem; align-items: center;
     }
-    .card-links-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.6rem;
-      color: var(--muted);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-right: 0.15rem;
+    .links-group {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center;
+    }
+    .links-group-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem;
+      color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
+      margin-right: 0.1rem; white-space: nowrap;
     }
 
-    /* Quality download buttons */
+    /* 720pier download buttons - gold */
     .dl-btn {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.05em;
-      color: var(--gold);
-      text-decoration: none;
-      padding: 0.2rem 0.55rem;
-      border: 1px solid var(--gold-dim);
-      border-radius: 2px;
-      background: none;
-      transition: background 0.1s, color 0.1s;
-      white-space: nowrap;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.05em; color: var(--gold); text-decoration: none;
+      padding: 0.2rem 0.55rem; border: 1px solid var(--gold-dim);
+      border-radius: 2px; background: none;
+      transition: background 0.1s, color 0.1s; white-space: nowrap;
     }
     .dl-btn:hover { background: var(--gold); color: #0b0e14; }
 
-    /* Search buttons */
-    .search-divider {
-      width: 1px; height: 14px;
-      background: var(--border);
-      margin: 0 0.2rem;
-      flex-shrink: 0;
+    /* NHL.com condensed button - red */
+    .condensed-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.05em; color: #e05070; text-decoration: none;
+      padding: 0.2rem 0.55rem; border: 1px solid var(--nhl-red-dim);
+      border-radius: 2px; background: none;
+      transition: background 0.1s, color 0.1s; white-space: nowrap;
+    }
+    .condensed-btn:hover { background: var(--nhl-red); color: #fff; }
+
+    /* Search buttons - muted */
+    .link-divider {
+      width: 1px; height: 14px; background: var(--border);
+      margin: 0 0.15rem; flex-shrink: 0;
     }
     .search-btn {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.05em;
-      color: var(--muted);
-      text-decoration: none;
-      padding: 0.2rem 0.5rem;
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      background: none;
-      transition: color 0.1s, border-color 0.1s;
-      white-space: nowrap;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.05em; color: var(--muted); text-decoration: none;
+      padding: 0.2rem 0.5rem; border: 1px solid var(--border); border-radius: 2px;
+      background: none; transition: color 0.1s, border-color 0.1s; white-space: nowrap;
     }
     .search-btn:hover { color: var(--ice-dim); border-color: var(--muted); }
 
-    /* ── EMPTY STATE ─────────────────────────────────────────── */
+    /* ── EMPTY STATE ──────────────────────────────── */
     .placeholder {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--muted);
-      font-size: 0.88rem;
+      text-align: center; padding: 3rem 1rem;
+      color: var(--muted); font-size: 0.88rem;
     }
     .placeholder .icon { font-size: 2.2rem; display: block; margin-bottom: 0.6rem; opacity: 0.35; }
 
-    /* ── FOOTER ──────────────────────────────────────────────── */
+    /* ── FOOTER ───────────────────────────────────── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 0.9rem 2.5rem;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.6rem;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.4rem;
+      border-top: 1px solid var(--border); padding: 0.9rem 2.5rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      color: var(--muted); letter-spacing: 0.06em;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.4rem;
     }
     footer a { color: var(--muted); text-decoration: none; }
     footer a:hover { color: var(--ice-dim); }
 
     @media (max-width: 620px) {
       header { padding: 1.25rem 1rem 1rem; }
-      main   { padding: 1.25rem 1rem 3rem; }
+      main { padding: 1.25rem 1rem 3rem; }
       .controls { grid-template-columns: 1fr; }
       .card-top { grid-template-columns: auto 1fr; }
       .card-badge { display: none; }
@@ -401,20 +284,19 @@
 <header>
   <div>
     <div class="site-title">NHL <span>Game</span> Browser</div>
-    <div class="site-subtitle">2025–26 · Powered by 720pier · Find · Watch · Check off</div>
+    <div class="site-subtitle">2025–26 Playoffs · 720pier downloads · NHL.com condensed · Track what you've watched</div>
   </div>
 </header>
 
 <main>
   <div id="loader">
     <div class="spinner"></div>
-    <div id="loader-text">Loading game data…</div>
+    <div id="loader-text">Loading game schedule…</div>
   </div>
 
   <div id="app">
     <div id="error-area"></div>
 
-    <!-- CONTROLS -->
     <div class="controls">
       <div class="field-group">
         <div class="field-label">Filter by team</div>
@@ -464,7 +346,7 @@
       </div>
       <div class="field-group">
         <div class="field-label">Custom search</div>
-        <input type="text" id="custom-filter" placeholder="e.g. Bruins, Round 2, Oilers…" />
+        <input type="text" id="custom-filter" placeholder="e.g. Bruins, Round 2, 4k…" />
       </div>
     </div>
 
@@ -476,10 +358,6 @@
       <label class="toggle-label">
         <input type="checkbox" id="toggle-watched" checked />
         Show watched games
-      </label>
-      <label class="toggle-label">
-        <input type="checkbox" id="toggle-condensed" />
-        Include condensed game links
       </label>
       <button class="clear-checks" id="btn-clear-checks">Clear all checkmarks</button>
     </div>
@@ -505,24 +383,63 @@
 </footer>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-//  CONSTANTS
-// ═══════════════════════════════════════════════════════════════
-const BASE_URL       = 'https://720pier.ru/';
-const LIST_FILE      = 'html_list.json';
-const GAMES_FILE     = 'games_info.json';
-const STORAGE_KEY    = 'nhl_watched_games';
+// ═══════════════════════════════════════════════════════════════════
+//  NHL TEAM ABBREVIATION MAP
+//  Used to decode NHL.com condensed game slugs like "tbl-at-mtl"
+// ═══════════════════════════════════════════════════════════════════
+const ABBR_TO_TEAM = {
+  ana: 'Anaheim Ducks',
+  ari: 'Arizona Coyotes',
+  bos: 'Boston Bruins',
+  buf: 'Buffalo Sabres',
+  cgy: 'Calgary Flames',
+  car: 'Carolina Hurricanes',
+  chi: 'Chicago Blackhawks',
+  col: 'Colorado Avalanche',
+  cbj: 'Columbus Blue Jackets',
+  dal: 'Dallas Stars',
+  det: 'Detroit Red Wings',
+  edm: 'Edmonton Oilers',
+  fla: 'Florida Panthers',
+  lak: 'Los Angeles Kings',
+  min: 'Minnesota Wild',
+  mtl: 'Montréal Canadiens',
+  nsh: 'Nashville Predators',
+  njd: 'New Jersey Devils',
+  nyi: 'New York Islanders',
+  nyr: 'New York Rangers',
+  ott: 'Ottawa Senators',
+  phi: 'Philadelphia Flyers',
+  pit: 'Pittsburgh Penguins',
+  sjs: 'San Jose Sharks',
+  sea: 'Seattle Kraken',
+  stl: 'St. Louis Blues',
+  tbl: 'Tampa Bay Lightning',
+  tor: 'Toronto Maple Leafs',
+  uta: 'Utah Mammoth',
+  van: 'Vancouver Canucks',
+  vgk: 'Vegas Golden Knights',
+  wsh: 'Washington Capitals',
+  wpg: 'Winnipeg Jets',
+};
 
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 //  STATE
-// ═══════════════════════════════════════════════════════════════
-let gamesData   = null;   // parsed games_info.json
-let forumPosts  = [];     // { title, href, isCondensed, away, home, dateStr }
+// ═══════════════════════════════════════════════════════════════════
+const BASE_URL    = 'https://720pier.ru/';
+const NHL_URL     = 'https://www.nhl.com';
+const LIST_FILE   = 'html_list.json';
+const GAMES_FILE  = 'games_info.json';
+const STORAGE_KEY = 'nhl_watched_games';
+
+let gamesData   = null;
+let forumPosts  = [];    // 720pier posts: { title, href, topicId, away, home, dateIso, btnLabel, isCondensed }
+let condensed   = [];    // NHL.com condensed: { href, away, home, dateIso }
 let watchedSet  = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
 
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 //  BOOT
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 async function init() {
   setLoaderText('Loading game schedule…');
   const [gamesRes, listRes] = await Promise.allSettled([
@@ -530,36 +447,36 @@ async function init() {
     fetch(LIST_FILE)
   ]);
 
-  // Load games_info.json
   if (gamesRes.status === 'fulfilled' && gamesRes.value.ok) {
     try { gamesData = await gamesRes.value.json(); }
     catch(e) { showError(`Could not parse games_info.json: ${e.message}`); }
   } else {
-    showError('Could not load games_info.json. Make sure it exists in the repo root.');
+    showError('Could not load games_info.json.');
   }
 
-  // Load html_list.json and all HTML files
   if (listRes.status === 'fulfilled' && listRes.value.ok) {
     try {
       const fileList = await listRes.value.json();
       if (Array.isArray(fileList) && fileList.length > 0) {
-        setLoaderText(`Indexing ${fileList.length} forum page(s)…`);
+        setLoaderText(`Indexing ${fileList.length} saved page(s)…`);
         await Promise.allSettled(fileList.map(loadHtmlFile));
       }
     } catch(e) {
       showError(`Could not parse html_list.json: ${e.message}`);
     }
   } else {
-    showError('Could not load html_list.json — forum links will not be available.');
+    showError('Could not load html_list.json — links will not be available.');
   }
 
   showApp();
   renderResults();
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  FORUM HTML PARSING
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
+//  DETECT AND DISPATCH HTML FILES
+//  720pier pages contain a.topictitle
+//  NHL.com pages contain a.nhl-c-card-wrap[href*="condensed-games"]
+// ═══════════════════════════════════════════════════════════════════
 async function loadHtmlFile(filename) {
   try {
     const res = await fetch(`html/${filename}`);
@@ -567,89 +484,132 @@ async function loadHtmlFile(filename) {
     const text = await res.text();
     const doc  = new DOMParser().parseFromString(text, 'text/html');
 
-    doc.querySelectorAll('a.topictitle').forEach(a => {
-      const rawHref = a.getAttribute('href') || '';
-      const href    = rawHref.startsWith('http')
-        ? rawHref : BASE_URL + rawHref.replace(/^\.\//, '');
+    const isNhl    = doc.querySelector('a.nhl-c-card-wrap[href*="condensed-games"]') !== null;
+    const is720    = doc.querySelector('a.topictitle') !== null;
 
-      // Deduplicate by topic ID
-      const tid = (href.match(/[?&]t=(\d+)/) || [])[1] || href;
-      if (forumPosts.find(p => p.topicId === tid)) return;
-
-      const title       = a.textContent.trim();
-      const isCondensed = /condensed/i.test(title);
-      const parsed      = parseForumTitle(title);
-
-      forumPosts.push({ title, href, topicId: tid, isCondensed, ...parsed });
-    });
+    if (isNhl) parseNhlCondensed(doc);
+    if (is720) parse720pier(doc);
   } catch(e) {
     console.warn(`Skipping ${filename}: ${e.message}`);
   }
 }
 
+// ─── 720pier parser ──────────────────────────────────────────────
+function parse720pier(doc) {
+  doc.querySelectorAll('a.topictitle').forEach(a => {
+    const rawHref = a.getAttribute('href') || '';
+    const href    = rawHref.startsWith('http')
+      ? rawHref : BASE_URL + rawHref.replace(/^\.\//, '');
+
+    const tid = (href.match(/[?&]t=(\d+)/) || [])[1] || href;
+    if (forumPosts.find(p => p.topicId === tid)) return;
+
+    const title       = a.textContent.trim();
+    const isCondensed = /condensed/i.test(title);
+    const parsed      = parse720Title(title);
+    forumPosts.push({ title, href, topicId: tid, isCondensed, ...parsed });
+  });
+}
+
 // Parse "NHL SC 2026 / Round 1 / Game 3 / 24.04.2026 / Team A @ Team B [meta]"
-function parseForumTitle(title) {
+function parse720Title(title) {
   const bracketIdx = title.lastIndexOf('[');
   const meta       = bracketIdx >= 0 ? title.slice(bracketIdx + 1, -1).trim() : '';
   const body       = bracketIdx >= 0 ? title.slice(0, bracketIdx).trim() : title;
   const parts      = body.split('/').map(s => s.trim()).filter(Boolean);
-
-  // Last segment: "Team A @ Team B"
   const matchupStr = parts[parts.length - 1] || '';
   const atIdx      = matchupStr.indexOf('@');
   const away       = atIdx >= 0 ? matchupStr.slice(0, atIdx).trim() : '';
   const home       = atIdx >= 0 ? matchupStr.slice(atIdx + 1).trim() : '';
 
-  // Date segment: DD.MM.YYYY
-  const dateRaw    = parts.find(p => /\d{2}\.\d{2}\.\d{4}/.test(p)) || '';
-  const dm         = dateRaw.match(/(\d{2})\.(\d{2})\.(\d{4})/);
-  const dateIso    = dm ? `${dm[3]}-${dm[2]}-${dm[1]}` : null;
+  const dateRaw = parts.find(p => /\d{2}\.\d{2}\.\d{4}/.test(p)) || '';
+  const dm      = dateRaw.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+  const dateIso = dm ? `${dm[3]}-${dm[2]}-${dm[1]}` : null;
 
-  // Quality/source from meta: e.g. "Hockey, WEB-DL HD/1080p/60fps, MKV/H.264, EN/TNT"
-  // Extract resolution label and network
-  const resMatch   = meta.match(/(4k\/2160p|1080p|720p)/i);
-  const resolution = resMatch ? resMatch[1].toLowerCase() : '';
-  const netMatch   = meta.match(/,\s*([A-Z0-9 /+]+)\s*\]?$/i);
-  const network    = netMatch ? netMatch[1].trim() : '';
-
-  // Build a short label: "4K · TNT" or "1080p · SN"
-  const is4k       = /4k|2160/i.test(meta);
-  const resLabel   = is4k ? '4K' : (resolution || '?');
-  const netLabel   = network.replace(/^EN\/|^FR\//i, '').trim();
-  const btnLabel   = netLabel ? `${resLabel} · ${netLabel}` : resLabel;
+  // Build quality button label from meta bracket
+  const is4k      = /4k|2160/i.test(meta);
+  const resMatch  = meta.match(/(1080p|720p)/i);
+  const resLabel  = is4k ? '4K' : (resMatch ? resMatch[1] : '?');
+  const isFrench  = /FR\//i.test(meta);
+  const langPfx   = isFrench ? 'FR · ' : '';
+  // Extract network after last comma: "EN/TNT" → "TNT", "FR/TVA SPORTS" → "TVA SPORTS"
+  const netMatch  = meta.match(/(?:EN|FR)\/([^,\]]+)/i);
+  const network   = netMatch ? netMatch[1].trim() : '';
+  const btnLabel  = network ? `${langPfx}${resLabel} · ${network}` : `${langPfx}${resLabel}`;
 
   return { away, home, dateIso, btnLabel, meta };
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  MATCH forum posts → a game entry
-//  Returns array of { href, btnLabel, isCondensed }
-// ═══════════════════════════════════════════════════════════════
+// ─── NHL.com condensed parser ─────────────────────────────────────
+function parseNhlCondensed(doc) {
+  doc.querySelectorAll('a.nhl-c-card-wrap[href*="condensed-games"]').forEach(a => {
+    const relHref = a.getAttribute('href') || '';
+    if (!relHref) return;
+    const href = relHref.startsWith('http') ? relHref : NHL_URL + relHref;
+
+    // Deduplicate by full href
+    if (condensed.find(c => c.href === href)) return;
+
+    // Slug pattern: /condensed-games/tbl-at-mtl-condensed-game-XXXXXXX
+    // Extract "tbl-at-mtl" portion
+    const slugMatch = relHref.match(/condensed-games\/([a-z]+)-at-([a-z]+)-condensed/);
+    if (!slugMatch) return;
+
+    const awayAbbr = slugMatch[1];
+    const homeAbbr = slugMatch[2];
+    const away     = ABBR_TO_TEAM[awayAbbr] || awayAbbr.toUpperCase();
+    const home     = ABBR_TO_TEAM[homeAbbr] || homeAbbr.toUpperCase();
+
+    // Date from <time datetime="2026-04-25T02:31:15">
+    const timeEl  = a.querySelector('time[datetime]');
+    const dateRaw = timeEl ? timeEl.getAttribute('datetime') : null;
+    const dateIso = dateRaw ? dateRaw.slice(0, 10) : null;
+
+    condensed.push({ href, away, home, dateIso });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  MATCH posts/condensed → a game entry
+// ═══════════════════════════════════════════════════════════════════
+function teamContains(candidate, target) {
+  return candidate.toLowerCase().includes(target.toLowerCase()) ||
+         target.toLowerCase().includes(candidate.toLowerCase());
+}
+
 function findPostsForGame(game) {
-  const awayLower = game.away_team.toLowerCase();
-  const homeLower = game.home_team.toLowerCase();
-  const dateIso   = game.date;
+  const awayL = game.away_team.toLowerCase();
+  const homeL = game.home_team.toLowerCase();
+  const date  = game.date;
 
   return forumPosts.filter(p => {
     if (!p.away || !p.home) return false;
-    const pAway = p.away.toLowerCase();
-    const pHome = p.home.toLowerCase();
-
-    // Teams must match (either direction handles home/away swap edge cases)
     const teamsMatch =
-      (pAway.includes(awayLower) || awayLower.includes(pAway)) &&
-      (pHome.includes(homeLower) || homeLower.includes(pHome));
-
-    // Date must match if we have one
-    const dateMatch = !dateIso || !p.dateIso || p.dateIso === dateIso;
-
+      (p.away.toLowerCase().includes(awayL) || awayL.includes(p.away.toLowerCase())) &&
+      (p.home.toLowerCase().includes(homeL) || homeL.includes(p.home.toLowerCase()));
+    const dateMatch = !date || !p.dateIso || p.dateIso === date;
     return teamsMatch && dateMatch;
   });
 }
 
-// ═══════════════════════════════════════════════════════════════
+function findCondensedForGame(game) {
+  const awayL = game.away_team.toLowerCase();
+  const homeL = game.home_team.toLowerCase();
+  const date  = game.date;
+
+  return condensed.filter(c => {
+    const awayMatch = c.away.toLowerCase().includes(awayL) || awayL.includes(c.away.toLowerCase());
+    const homeMatch = c.home.toLowerCase().includes(homeL) || homeL.includes(c.home.toLowerCase());
+    // Also try reversed (NHL.com uses game-time home/away which may differ)
+    const swapMatch = c.away.toLowerCase().includes(homeL) && c.home.toLowerCase().includes(awayL);
+    const dateMatch = !date || !c.dateIso || c.dateIso === date;
+    return (awayMatch && homeMatch || swapMatch) && dateMatch;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
 //  FILTER HELPERS
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 function teamTerms() {
   const raw = document.getElementById('team-select').value;
   return raw ? raw.split('|').map(t => t.toLowerCase()) : [];
@@ -666,14 +626,13 @@ function gameMatchesFilter(game) {
   return terms.some(t => haystack.includes(t));
 }
 
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 //  RENDER
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 function renderResults() {
-  const resultsEl        = document.getElementById('results');
-  const showTbd          = document.getElementById('toggle-tbd').checked;
-  const showWatched      = document.getElementById('toggle-watched').checked;
-  const showCondensed    = document.getElementById('toggle-condensed').checked;
+  const resultsEl   = document.getElementById('results');
+  const showTbd     = document.getElementById('toggle-tbd').checked;
+  const showWatched = document.getElementById('toggle-watched').checked;
 
   if (!gamesData) {
     resultsEl.innerHTML = `<div class="placeholder"><span class="icon">⚠️</span>games_info.json not loaded.</div>`;
@@ -681,23 +640,16 @@ function renderResults() {
   }
 
   const season = gamesData.seasons.find(s => s.season === '2025-26');
-  if (!season) {
-    resultsEl.innerHTML = `<div class="placeholder"><span class="icon">⚠️</span>No 2025-26 season found in games_info.json.</div>`;
-    return;
-  }
+  if (!season) { resultsEl.innerHTML = `<div class="placeholder"><span class="icon">⚠️</span>No 2025-26 season found.</div>`; return; }
 
   const playoffs = season.stages.find(s => s.stage === 'playoffs');
-  if (!playoffs) {
-    resultsEl.innerHTML = `<div class="placeholder"><span class="icon">⚠️</span>No playoffs stage found.</div>`;
-    return;
-  }
+  if (!playoffs) { resultsEl.innerHTML = `<div class="placeholder"><span class="icon">⚠️</span>No playoffs stage found.</div>`; return; }
 
-  let totalShown = 0;
-  let totalWatched = 0;
+  let totalShown = 0, totalWatched = 0;
   const html = [];
 
   playoffs.rounds.forEach(round => {
-    const roundGames = [];
+    const roundItems = [];
 
     round.series.forEach(series => {
       if (series.away_team === 'TBD' && series.home_team === 'TBD') return;
@@ -705,33 +657,34 @@ function renderResults() {
       series.games.forEach(game => {
         if (!gameMatchesFilter(game)) return;
 
-        const posts    = findPostsForGame(game).filter(p => showCondensed || !p.isCondensed);
-        const isTbd    = game.status === 'tbd' || posts.length === 0 && game.status !== 'confirmed';
-        const gameKey  = `${series.series_id}_g${game.game_number}`;
-        const isWatched = watchedSet.has(gameKey);
+        const posts720   = findPostsForGame(game).filter(p => !p.isCondensed);
+        const condenseds = findCondensedForGame(game);
+        const hasLinks   = posts720.length > 0 || condenseds.length > 0;
+        const isTbd      = game.status === 'tbd' && !hasLinks;
+        const gameKey    = `${series.series_id}_g${game.game_number}`;
+        const isWatched  = watchedSet.has(gameKey);
 
         if (!showTbd && isTbd) return;
         if (!showWatched && isWatched) return;
 
-        roundGames.push({ game, series, posts, isTbd, isWatched, gameKey });
+        roundItems.push({ game, series, posts720, condenseds, hasLinks, isTbd, isWatched, gameKey });
       });
     });
 
-    if (roundGames.length === 0) return;
+    if (roundItems.length === 0) return;
 
-    // Sort oldest first within round
-    roundGames.sort((a, b) => {
+    // Oldest first
+    roundItems.sort((a, b) => {
       const da = a.game.date ? new Date(a.game.date).getTime() : Infinity;
       const db = b.game.date ? new Date(b.game.date).getTime() : Infinity;
-      if (da !== db) return da - db;
-      return a.game.game_number - b.game.game_number;
+      return da !== db ? da - db : a.game.game_number - b.game.game_number;
     });
 
     html.push(`<div class="round-header">${round.round_label}</div>`);
 
-    // Group by series within round
+    // Group by series
     const bySeries = {};
-    roundGames.forEach(item => {
+    roundItems.forEach(item => {
       const sid = item.series.series_id;
       if (!bySeries[sid]) bySeries[sid] = { series: item.series, items: [] };
       bySeries[sid].items.push(item);
@@ -740,46 +693,63 @@ function renderResults() {
     Object.values(bySeries).forEach(({ series, items }) => {
       html.push(`<div class="series-header">${series.away_team} @ ${series.home_team}</div>`);
 
-      items.forEach(({ game, posts, isTbd, isWatched, gameKey }, idx) => {
+      items.forEach(({ game, posts720, condenseds, hasLinks, isTbd, isWatched, gameKey }, idx) => {
         totalShown++;
         if (isWatched) totalWatched++;
 
         const dateLabel = game.date
-          ? new Date(game.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
+          ? new Date(game.date + 'T12:00:00').toLocaleDateString('en-US',
+              { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
           : 'Date TBD';
 
         const matchup = `${game.away_team} @ ${game.home_team}`;
 
         let badgeHtml, badgeClass;
-        if (isWatched)       { badgeHtml = '✓ Watched';   badgeClass = 'badge-watched'; }
-        else if (isTbd)      { badgeHtml = 'Not posted';  badgeClass = 'badge-tbd'; }
-        else                 { badgeHtml = 'Available';   badgeClass = 'badge-available'; }
+        if (isWatched)  { badgeHtml = '✓ Watched';  badgeClass = 'badge-watched'; }
+        else if (isTbd) { badgeHtml = 'Not posted'; badgeClass = 'badge-tbd'; }
+        else            { badgeHtml = 'Available';  badgeClass = 'badge-available'; }
 
-        // Download buttons (deduplicated by label — keep first per label)
+        // ── 720pier quality buttons (deduplicated by label) ──
         const seenLabels = new Set();
-        const dlButtons  = posts
+        const dlButtons = posts720
           .filter(p => { if (seenLabels.has(p.btnLabel)) return false; seenLabels.add(p.btnLabel); return true; })
           .map(p => `<a class="dl-btn" href="${escHtml(p.href)}" target="_blank" rel="noopener">${escHtml(p.btnLabel)}</a>`)
           .join('');
 
-        // Search links
-        const searchQuery   = encodeURIComponent(`${matchup} NHL 2026`);
-        const nhlQuery      = encodeURIComponent(matchup);
-        const googleSearch  = `https://www.google.com/search?q=${searchQuery}`;
-        const nhlSearch     = `https://www.nhl.com/search/?query=${nhlQuery}`;
+        // ── NHL.com condensed buttons (deduplicated by href) ──
+        const condensedButtons = condenseds
+          .map(c => `<a class="condensed-btn" href="${escHtml(c.href)}" target="_blank" rel="noopener">Condensed · NHL.com</a>`)
+          .join('');
 
-        const linksRow = (dlButtons || !isTbd) ? `
-          <div class="card-links">
-            ${dlButtons ? `<span class="card-links-label">Watch:</span>${dlButtons}` : ''}
-            <div class="search-divider"></div>
-            <a class="search-btn" href="${googleSearch}" target="_blank" rel="noopener">Google ↗</a>
-            <a class="search-btn" href="${nhlSearch}"    target="_blank" rel="noopener">NHL.com ↗</a>
-          </div>` : '';
+        // ── Search links ──
+        const searchQ  = encodeURIComponent(`${matchup} NHL 2026`);
+        const nhlQ     = encodeURIComponent(matchup);
+        const gSearch  = `https://www.google.com/search?q=${searchQ}`;
+        const nhlSrch  = `https://www.nhl.com/search/?query=${nhlQ}`;
+
+        // ── Build links row ──
+        let linksHtml = '';
+        if (hasLinks || !isTbd) {
+          const parts = [];
+          if (dlButtons) {
+            parts.push(`<div class="links-group"><span class="links-group-label">720pier:</span>${dlButtons}</div>`);
+          }
+          if (condensedButtons) {
+            parts.push(`<div class="links-group"><span class="links-group-label">Condensed:</span>${condensedButtons}</div>`);
+          }
+          parts.push(`<div class="links-group" style="margin-left:auto">
+            <div class="link-divider"></div>
+            <a class="search-btn" href="${gSearch}"  target="_blank" rel="noopener">Google ↗</a>
+            <a class="search-btn" href="${nhlSrch}" target="_blank" rel="noopener">NHL.com ↗</a>
+          </div>`);
+          linksHtml = `<div class="card-links">${parts.join('')}</div>`;
+        }
 
         html.push(`
           <div class="game-card${isTbd ? ' is-tbd' : ''}${isWatched ? ' is-watched' : ''}" style="animation-delay:${Math.min(idx*12,200)}ms">
             <div class="card-top">
-              <input type="checkbox" class="watch-check" data-key="${escHtml(gameKey)}" ${isWatched ? 'checked' : ''} ${isTbd ? 'disabled' : ''} title="Mark as watched" />
+              <input type="checkbox" class="watch-check" data-key="${escHtml(gameKey)}"
+                ${isWatched ? 'checked' : ''} ${isTbd ? 'disabled' : ''} title="Mark as watched" />
               <div class="card-info">
                 <div class="card-date">Game ${game.game_number} · ${escHtml(dateLabel)}</div>
                 <div class="card-matchup">${escHtml(matchup)}</div>
@@ -787,7 +757,7 @@ function renderResults() {
               </div>
               <span class="card-badge ${badgeClass}">${badgeHtml}</span>
             </div>
-            ${linksRow}
+            ${linksHtml}
           </div>`);
       });
     });
@@ -797,7 +767,6 @@ function renderResults() {
     resultsEl.innerHTML = `<div class="placeholder"><span class="icon">🔍</span>No games match your current filters.</div>`;
   } else {
     resultsEl.innerHTML = html.join('');
-    // Attach checkbox listeners
     resultsEl.querySelectorAll('.watch-check').forEach(cb => {
       cb.addEventListener('change', e => {
         const key = e.target.dataset.key;
@@ -809,33 +778,27 @@ function renderResults() {
     });
   }
 
-  // Status bar
   const filterLabel = document.getElementById('team-select').value
     ? (document.querySelector('#team-select option:checked')?.textContent || '')
     : (customTerm() || 'all teams');
 
   document.getElementById('status-left').innerHTML =
-    `Showing <span class="hl">${totalShown}</span> game(s) · ${filterLabel} · ${forumPosts.length} posts indexed`;
+    `Showing <span class="hl">${totalShown}</span> game(s) · ${filterLabel} · ` +
+    `${forumPosts.length} 720pier posts · ${condensed.length} NHL.com condensed indexed`;
   document.getElementById('status-right').innerHTML =
-    totalWatched > 0
-      ? `<span class="grn">✓ ${totalWatched} watched</span>`
-      : '';
+    totalWatched > 0 ? `<span class="grn">✓ ${totalWatched} watched</span>` : '';
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  WATCHED STATE
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
+//  PERSISTENCE + HELPERS
+// ═══════════════════════════════════════════════════════════════════
 function saveWatched() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify([...watchedSet]));
 }
-
-// ═══════════════════════════════════════════════════════════════
-//  HELPERS
-// ═══════════════════════════════════════════════════════════════
 function escHtml(str) {
   return String(str)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function setLoaderText(msg) { document.getElementById('loader-text').textContent = msg; }
 function showApp() {
@@ -846,9 +809,9 @@ function showError(html) {
   document.getElementById('error-area').innerHTML += `<div class="error-box">${html}</div>`;
 }
 
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 //  EVENT LISTENERS
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 document.getElementById('team-select').addEventListener('change', () => {
   document.getElementById('custom-filter').value = '';
   renderResults();
@@ -857,17 +820,14 @@ document.getElementById('custom-filter').addEventListener('input', () => {
   document.getElementById('team-select').value = '';
   renderResults();
 });
-['toggle-tbd','toggle-watched','toggle-condensed'].forEach(id => {
-  document.getElementById(id).addEventListener('change', renderResults);
-});
+['toggle-tbd','toggle-watched'].forEach(id =>
+  document.getElementById(id).addEventListener('change', renderResults)
+);
 document.getElementById('btn-clear-checks').addEventListener('click', () => {
-  watchedSet.clear();
-  saveWatched();
-  renderResults();
+  watchedSet.clear(); saveWatched(); renderResults();
 });
 
 init();
 </script>
-
 </body>
 </html>
