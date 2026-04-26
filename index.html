@@ -75,7 +75,7 @@
       border-radius: var(--radius); color: var(--ice);
       font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
       letter-spacing: 0.08em;
-      padding: 0.3rem 2rem 0.3rem 0.7rem; appearance: none;
+      padding: 0.3rem 2.2rem 0.3rem 0.7rem; min-width: 160px; appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a5a6e' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 0.6rem center;
       cursor: pointer; transition: border-color 0.15s;
@@ -101,7 +101,7 @@
 
     /* ── CONTROLS ─────────────────────────────────── */
     .controls {
-      display: grid; grid-template-columns: 1fr 1fr;
+      display: grid; grid-template-columns: 1fr;
       gap: 1rem; margin-bottom: 1rem; align-items: end;
     }
     .field-group { display: flex; flex-direction: column; gap: 0.35rem; }
@@ -315,9 +315,9 @@
     <div class="site-subtitle">720pier downloads · NHL.com condensed · Track what you've watched</div>
   </div>
   <div class="header-right">
-    <span class="season-label">Season</span>
+    <span class="season-label">Playoff Season</span>
     <select class="season-select" id="season-select">
-      <option value="2025-26">2025–26 Playoffs</option>
+      <option value="2025-26">2025–26</option>
       <!-- Add future seasons here -->
     </select>
   </div>
@@ -379,15 +379,11 @@
           </optgroup>
         </select>
       </div>
-      <div class="field-group">
-        <div class="field-label">Custom search</div>
-        <input type="text" id="custom-filter" placeholder="e.g. Bruins, Round 2, 4k…" />
-      </div>
     </div>
 
     <div class="row-options">
       <label class="toggle-label">
-        <input type="checkbox" id="toggle-tbd" checked />
+        <input type="checkbox" id="toggle-tbd" />
         Show upcoming / not yet posted
       </label>
       <label class="toggle-label">
@@ -491,29 +487,38 @@ async function init() {
 async function loadHtmlFile(filename) {
   try {
     const res = await fetch(`html/${filename}`);
-    if (!res.ok) return;
+    if (!res.ok) { console.warn(`[load] HTTP ${res.status} for ${filename}`); return; }
     const text = await res.text();
     const doc  = new DOMParser().parseFromString(text, 'text/html');
 
-    if (doc.querySelector('a.nhl-c-card-wrap[href*="condensed-games"]')) parseNhlCondensed(doc);
-    if (doc.querySelector('a.topictitle')) parse720pier(doc);
+    const isNhl = Boolean(doc.querySelector('a.nhl-c-card-wrap[href*="condensed-games"]'));
+    const is720 = Boolean(doc.querySelector('a.topictitle'));
+    console.log(`[load] ${filename} → 720pier:${is720} NHL:${isNhl}`);
+
+    if (isNhl) parseNhlCondensed(doc);
+    if (is720) parse720pier(doc);
   } catch(e) {
-    console.warn(`Skipping ${filename}:`, e.message);
+    console.warn(`[load] Error in ${filename}:`, e.message);
   }
 }
 
 // ─── 720pier ─────────────────────────────────────────────────────
 function parse720pier(doc) {
+  let added = 0, dupes = 0;
   doc.querySelectorAll('a.topictitle').forEach(a => {
     const rawHref = a.getAttribute('href') || '';
-    const href    = rawHref.startsWith('http') ? rawHref : BASE_URL + rawHref.replace(/^\.\//, '');
+    const href    = rawHref.startsWith('http') ? rawHref : BASE_URL + rawHref.replace(/^\.\//,  '');
     const tid     = (href.match(/[?&]t=(\d+)/) || [])[1] || href;
-    if (forumPosts.find(p => p.topicId === tid)) return;
+    if (forumPosts.find(p => p.topicId === tid)) { dupes++; return; }
 
     const title       = a.textContent.trim();
     const isCondensed = /condensed/i.test(title);
-    forumPosts.push({ title, href, topicId: tid, isCondensed, ...parse720Title(title) });
+    const parsed      = parse720Title(title);
+    console.log(`[720pier] t=${tid} date=${parsed.dateIso} away="${parsed.away}" home="${parsed.home}" condensed:${isCondensed}`);
+    forumPosts.push({ title, href, topicId: tid, isCondensed, ...parsed });
+    added++;
   });
+  console.log(`[720pier] done: +${added} new, ${dupes} dupes, total ${forumPosts.length}`);
 }
 
 function parse720Title(title) {
@@ -585,27 +590,33 @@ function parseNhlDisplayDate(text) {
 //              require the game's status === 'confirmed' to avoid
 //              phantom matches on TBD placeholder games.
 // ═══════════════════════════════════════════════════════════════════
+// Normalize accented chars so "Montreal" matches "Montréal" etc.
+function normalizeTeam(s) {
+  return s.toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
 function teamsMatch(postAway, postHome, gameAway, gameHome) {
-  const pa = postAway.toLowerCase(), ph = postHome.toLowerCase();
-  const ga = gameAway.toLowerCase(), gh = gameHome.toLowerCase();
+  const pa = normalizeTeam(postAway), ph = normalizeTeam(postHome);
+  const ga = normalizeTeam(gameAway), gh = normalizeTeam(gameHome);
   return (pa.includes(ga) || ga.includes(pa)) && (ph.includes(gh) || gh.includes(ph));
 }
 
 function findPostsForGame(game) {
   const hasGameDate = Boolean(game.date);
-  return forumPosts.filter(p => {
-    if (!p.away || !p.home) return false;
-    if (!teamsMatch(p.away, p.home, game.away_team, game.home_team)) return false;
-    // If the game has a known date, the post MUST also have a date AND it must match.
-    // This prevents dateless TBD games from inheriting posts from played games.
-    if (hasGameDate) {
-      return p.dateIso === game.date;
-    } else {
-      // Game has no date (TBD) — only attach posts if the post itself has no date either.
-      // In practice, all 720pier posts have dates, so TBD games will always get 0 posts. ✓
-      return p.dateIso === null;
-    }
-  });
+  const matches = [];
+  for (const p of forumPosts) {
+    if (!p.away || !p.home) continue;
+    const tm = teamsMatch(p.away, p.home, game.away_team, game.home_team);
+    if (!tm) continue;
+    const dateOk = hasGameDate ? p.dateIso === game.date : p.dateIso === null;
+    console.log(
+      `[match] G${game.game_number} ${game.away_team}@${game.home_team} (${game.date}) ` +
+      `vs post "${p.away}"@"${p.home}" (${p.dateIso}) → teams:${tm} date:${dateOk}`
+    );
+    if (dateOk) matches.push(p);
+  }
+  return matches;
 }
 
 function findCondensedForGame(game) {
@@ -626,10 +637,7 @@ function findCondensedForGame(game) {
 // ═══════════════════════════════════════════════════════════════════
 function getTerms() {
   const raw = document.getElementById('team-select').value;
-  const terms = raw ? raw.split('|').map(t => t.toLowerCase()) : [];
-  const ct = document.getElementById('custom-filter').value.trim().toLowerCase();
-  if (ct) terms.push(ct);
-  return terms;
+  return raw ? raw.split('|').map(t => t.toLowerCase()) : [];
 }
 function gameMatchesFilter(game) {
   const terms = getTerms();
@@ -800,7 +808,7 @@ function renderResults() {
 
   const filterLabel = document.getElementById('team-select').value
     ? (document.querySelector('#team-select option:checked')?.textContent?.trim() || '')
-    : (document.getElementById('custom-filter').value.trim() || 'all teams');
+    : 'all teams';
 
   document.getElementById('status-left').innerHTML =
     `Showing <span class="hl">${totalShown}</span> game(s) · ${esc(filterLabel)} · ` +
@@ -831,9 +839,7 @@ function showError(html) {
 document.getElementById('team-select').addEventListener('change', () => {
   document.getElementById('custom-filter').value = ''; renderResults();
 });
-document.getElementById('custom-filter').addEventListener('input', () => {
-  document.getElementById('team-select').value = ''; renderResults();
-});
+
 document.getElementById('season-select').addEventListener('change', renderResults);
 ['toggle-tbd','toggle-watched'].forEach(id =>
   document.getElementById(id).addEventListener('change', renderResults)
