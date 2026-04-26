@@ -22,6 +22,8 @@
       --nhl-red-dim: #6a0917;
       --purple:      #9b72cf;
       --purple-dim:  #4a2d75;
+      --teal:        #3dd6c8;
+      --teal-dim:    #1a5e58;
       --muted:       #4a5a6e;
       --tbd-text:    #364455;
       --text:        #dce6f0;
@@ -276,6 +278,16 @@
     }
     .nhl-search-btn:hover { background: var(--purple); color: #fff; }
 
+    /* NHL.com game recap - teal */
+    .recap-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.04em; color: var(--teal); text-decoration: none;
+      padding: 0.22rem 0.6rem; border: 1px solid var(--teal-dim);
+      border-radius: 2px; background: rgba(61,214,200,0.07);
+      transition: background 0.1s, color 0.1s; white-space: nowrap;
+    }
+    .recap-btn:hover { background: var(--teal); color: #0b0e14; }
+
     .link-divider {
       width: 1px; height: 14px; background: var(--border);
       margin: 0 0.1rem; flex-shrink: 0; align-self: center;
@@ -442,7 +454,8 @@ const STORAGE_KEY = 'nhl_watched_games';
 
 let gamesData  = null;
 let forumPosts = [];  // 720pier: { title,href,topicId,away,home,dateIso,btnLabel,isCondensed }
-let condensed  = [];  // NHL.com:  { href,away,home,dateIso }
+let condensed  = [];  // NHL.com condensed: { href,away,home,dateIso }
+let recaps     = [];  // NHL.com recaps:    { href,away,home,dateIso }
 let watchedSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
 
 // ═══════════════════════════════════════════════════════════════════
@@ -491,12 +504,14 @@ async function loadHtmlFile(filename) {
     const text = await res.text();
     const doc  = new DOMParser().parseFromString(text, 'text/html');
 
-    const isNhl = Boolean(doc.querySelector('a.nhl-c-card-wrap[href*="condensed-games"]'));
-    const is720 = Boolean(doc.querySelector('a.topictitle'));
-    console.log(`[load] ${filename} → 720pier:${is720} NHL:${isNhl}`);
+    const isCondensedPage = Boolean(doc.querySelector('a.nhl-c-card-wrap[href*="condensed-games"]'));
+    const isRecapPage     = Boolean(doc.querySelector('a.nhl-c-card-wrap[href*="game-recaps"]'));
+    const is720           = Boolean(doc.querySelector('a.topictitle'));
+    console.log(`[load] ${filename} → 720pier:${is720} condensed:${isCondensedPage} recap:${isRecapPage}`);
 
-    if (isNhl) parseNhlCondensed(doc);
-    if (is720) parse720pier(doc);
+    if (isCondensedPage) parseNhlCondensed(doc);
+    if (isRecapPage)     parseNhlRecaps(doc);
+    if (is720)           parse720pier(doc);
   } catch(e) {
     console.warn(`[load] Error in ${filename}:`, e.message);
   }
@@ -573,6 +588,31 @@ function parseNhlCondensed(doc) {
   });
 }
 
+// ─── NHL.com game recaps ──────────────────────────────────────────
+function parseNhlRecaps(doc) {
+  let added = 0, dupes = 0;
+  doc.querySelectorAll('a.nhl-c-card-wrap[href*="game-recaps"]').forEach(a => {
+    const relHref = a.getAttribute('href') || '';
+    if (!relHref) return;
+    const href = relHref.startsWith('http') ? relHref : NHL_URL + relHref;
+    if (recaps.find(r => r.href === href)) { dupes++; return; }
+
+    // Slug: /game-recaps/tbl-at-mtl-recap-XXXX
+    const slugMatch = relHref.match(/game-recaps\/([a-z]+)-at-([a-z]+)-recap/);
+    if (!slugMatch) return;
+
+    const away = ABBR_TO_TEAM[slugMatch[1]] || slugMatch[1].toUpperCase();
+    const home = ABBR_TO_TEAM[slugMatch[2]] || slugMatch[2].toUpperCase();
+
+    const timeEl  = a.querySelector('time[datetime]');
+    const dateIso = timeEl ? parseNhlDisplayDate(timeEl.textContent.trim()) : null;
+    console.log(`[recap] ${away} @ ${home} date=${dateIso} href=${relHref.slice(-30)}`);
+    recaps.push({ href, away, home, dateIso });
+    added++;
+  });
+  console.log(`[recap] done: +${added} new, ${dupes} dupes, total ${recaps.length}`);
+}
+
 // Convert "Apr 21, 2026" → "2026-04-21"
 function parseNhlDisplayDate(text) {
   const months = { Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',
@@ -632,6 +672,18 @@ function findCondensedForGame(game) {
   });
 }
 
+function findRecapsForGame(game) {
+  const hasGameDate = Boolean(game.date);
+  return recaps.filter(r => {
+    const fwd = teamsMatch(r.away, r.home, game.away_team, game.home_team);
+    const rev = teamsMatch(r.away, r.home, game.home_team, game.away_team);
+    if (!fwd && !rev) return false;
+    if (!hasGameDate) return r.dateIso === null;
+    if (!r.dateIso) return false;
+    return r.dateIso === game.date;
+  });
+}
+
 // ═══════════════════════════════════════════════════════════════════
 //  FILTER HELPERS
 // ═══════════════════════════════════════════════════════════════════
@@ -687,7 +739,8 @@ function renderResults() {
         // Find matching posts — strict date matching prevents phantom links
         const posts720   = findPostsForGame(game).filter(p => !p.isCondensed);
         const condenseds = findCondensedForGame(game);
-        const hasLinks   = posts720.length > 0 || condenseds.length > 0;
+        const gameRecaps = findRecapsForGame(game);
+        const hasLinks   = posts720.length > 0 || condenseds.length > 0 || gameRecaps.length > 0;
 
         // A game is TBD if: no known date + no matching posts (truly unplayed)
         // OR: date is in the future and genuinely status===tbd and no posts found
@@ -699,7 +752,7 @@ function renderResults() {
         if (!showTbd && isTbd) return;
         if (!showWatched && isWatched) return;
 
-        roundItems.push({ game, series, posts720, condenseds, hasLinks, isTbd, isWatched, gameKey });
+        roundItems.push({ game, series, posts720, condenseds, gameRecaps, hasLinks, isTbd, isWatched, gameKey });
       });
     });
 
@@ -725,7 +778,7 @@ function renderResults() {
     Object.values(bySeries).forEach(({ series, items }) => {
       html.push(`<div class="series-header">${series.away_team} @ ${series.home_team}</div>`);
 
-      items.forEach(({ game, posts720, condenseds, hasLinks, isTbd, isWatched, gameKey }, idx) => {
+      items.forEach(({ game, posts720, condenseds, gameRecaps, hasLinks, isTbd, isWatched, gameKey }, idx) => {
         totalShown++;
         if (isWatched) totalWatched++;
 
@@ -753,6 +806,11 @@ function renderResults() {
           .map(c => `<a class="condensed-btn" href="${esc(c.href)}" target="_blank" rel="noopener">▶ Condensed · NHL.com</a>`)
           .join('');
 
+        // NHL.com recap buttons
+        const recapBtns = gameRecaps
+          .map(r => `<a class="recap-btn" href="${esc(r.href)}" target="_blank" rel="noopener">▶ Recap · NHL.com</a>`)
+          .join('');
+
         // Search links
         const gQ   = encodeURIComponent(`${matchup} NHL 2026`);
         const nhlQ = encodeURIComponent(matchup);
@@ -765,6 +823,9 @@ function renderResults() {
           }
           if (condensedBtns) {
             groups.push(`<div class="links-group">${condensedBtns}</div>`);
+          }
+          if (recapBtns) {
+            groups.push(`<div class="links-group">${recapBtns}</div>`);
           }
           groups.push(`
             <div class="links-group" style="margin-left:auto">
@@ -812,7 +873,7 @@ function renderResults() {
 
   document.getElementById('status-left').innerHTML =
     `Showing <span class="hl">${totalShown}</span> game(s) · ${esc(filterLabel)} · ` +
-    `${forumPosts.length} 720pier posts · ${condensed.length} NHL.com condensed indexed`;
+    `${forumPosts.length} 720pier posts · ${condensed.length} condensed · ${recaps.length} recaps indexed`;
   document.getElementById('status-right').innerHTML =
     totalWatched > 0 ? `<span class="grn">✓ ${totalWatched} watched</span>` : '';
 }
