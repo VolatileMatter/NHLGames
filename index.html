@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏒</text></svg>">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NHL Game Browser</title>
@@ -426,6 +427,26 @@
 </footer>
 
 <script>
+// Safe function caller - prevents "fn is not a function" errors
+function safeCall(fn, ...args) {
+    if (typeof fn === 'function') {
+        return fn(...args);
+    }
+    console.warn('[SafeCall] Attempted to call non-function:', fn);
+    return null;
+}
+
+// Safe event handler wrapper
+function safeEventHandler(handler) {
+    return function(e) {
+        if (typeof handler === 'function') {
+            return handler(e);
+        }
+        console.warn('[SafeHandler] Event handler is not a function:', handler);
+    };
+}
+
+
 // ═══════════════════════════════════════════════════════════════════
 //  ABBR → FULL TEAM NAME  (for NHL.com condensed game slug decoding)
 // ═══════════════════════════════════════════════════════════════════
@@ -504,13 +525,13 @@ let watchedSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
   // DEBUG: Log all loaded games
   function debugGamesData() {
     if (!gamesData) { console.log('[DEBUG] No gamesData loaded'); return; }
-    const seasonData = gamesData.seasons.find(s => s.season === '2025-26');
+    seasonData = gamesData.seasons.find(s => s.season === '2025-26');
     if (!seasonData) { console.log('[DEBUG] Season 2025-26 not found'); return; }
-    const playoffs = seasonData.stages.find(s => s.stage === 'playoffs');
+    playoffs = seasonData.stages.find(s => s.stage === 'playoffs');
     if (!playoffs) { console.log('[DEBUG] Playoffs stage not found'); return; }
     
     console.log('=== GAMES IN games_info.json ===');
-    let totalGames = 0;
+    totalGames = 0;
     playoffs.rounds.forEach(round => {
       round.series.forEach(series => {
         series.games.forEach(game => {
@@ -522,7 +543,7 @@ let watchedSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
     console.log('Total games loaded: ' + totalGames);
     
     // Check for Tampa Bay games specifically
-    let tampaGames = [];
+    tampaGames = [];
     playoffs.rounds.forEach(round => {
       round.series.forEach(series => {
         series.games.forEach(game => {
@@ -649,20 +670,20 @@ function parseNhlCondensed(doc) {
   doc.querySelectorAll('a.nhl-c-card-wrap[href*="condensed-games"]').forEach(a => {
     const relHref = a.getAttribute('href') || '';
     if (!relHref) return;
-    const href = relHref.startsWith('http') ? relHref : NHL_URL + relHref;
+    href = relHref.startsWith('http') ? relHref : NHL_URL + relHref;
     if (condensed.find(c => c.href === href)) return;
 
     // Slug: /condensed-games/tbl-at-mtl-condensed-game-XXXX
     const slugMatch = relHref.match(/condensed-games\/([a-z]+)-at-([a-z]+)-condensed/);
     if (!slugMatch) return;
 
-    const away = ABBR_TO_TEAM[slugMatch[1]] || slugMatch[1].toUpperCase();
-    const home = ABBR_TO_TEAM[slugMatch[2]] || slugMatch[2].toUpperCase();
+    away = ABBR_TO_TEAM[slugMatch[1]] || slugMatch[1].toUpperCase();
+    home = ABBR_TO_TEAM[slugMatch[2]] || slugMatch[2].toUpperCase();
 
     // Read the visible display text e.g. "Apr 21, 2026" rather than the datetime
     // attribute which is UTC and can roll over to the next calendar day for late games.
     const timeEl  = a.querySelector('time[datetime]');
-    const dateIso = timeEl ? parseNhlDisplayDate(timeEl.textContent.trim()) : null;
+    dateIso = timeEl ? parseNhlDisplayDate(timeEl.textContent.trim()) : null;
 
     condensed.push({ href, away, home, dateIso });
   });
@@ -670,22 +691,22 @@ function parseNhlCondensed(doc) {
 
 // ─── NHL.com game recaps ──────────────────────────────────────────
 function parseNhlRecaps(doc) {
-  let added = 0, dupes = 0;
+    added = 0, dupes = 0;
   doc.querySelectorAll('a.nhl-c-card-wrap[href*="game-recaps"]').forEach(a => {
-    const relHref = a.getAttribute('href') || '';
+    relHref = a.getAttribute('href') || '';
     if (!relHref) return;
-    const href = relHref.startsWith('http') ? relHref : NHL_URL + relHref;
+    href = relHref.startsWith('http') ? relHref : NHL_URL + relHref;
     if (recaps.find(r => r.href === href)) { dupes++; return; }
 
     // Slug: /game-recaps/tbl-at-mtl-recap-XXXX
-    const slugMatch = relHref.match(/game-recaps\/([a-z]+)-at-([a-z]+)-recap/);
+    slugMatch = relHref.match(/game-recaps\/([a-z]+)-at-([a-z]+)-recap/);
     if (!slugMatch) return;
 
-    const away = ABBR_TO_TEAM[slugMatch[1]] || slugMatch[1].toUpperCase();
-    const home = ABBR_TO_TEAM[slugMatch[2]] || slugMatch[2].toUpperCase();
+    away = ABBR_TO_TEAM[slugMatch[1]] || slugMatch[1].toUpperCase();
+    home = ABBR_TO_TEAM[slugMatch[2]] || slugMatch[2].toUpperCase();
 
-    const timeEl  = a.querySelector('time[datetime]');
-    const dateIso = timeEl ? parseNhlDisplayDate(timeEl.textContent.trim()) : null;
+    timeEl = a.querySelector('time[datetime]');
+    dateIso = timeEl ? parseNhlDisplayDate(timeEl.textContent.trim()) : null;
     console.log(`[recap] ${away} @ ${home} date=${dateIso} href=${relHref.slice(-30)}`);
     recaps.push({ href, away, home, dateIso });
     added++;
@@ -748,7 +769,7 @@ function findPostsForGame(game) {
 }
 
 function findCondensedForGame(game) {
-  const hasGameDate = Boolean(game.date);
+    hasGameDate = Boolean(game.date);
   return condensed.filter(c => {
     // Allow both orientations (NHL.com may list home/away differently)
     const fwd = teamsMatch(c.away, c.home, game.away_team, game.home_team);
@@ -761,10 +782,10 @@ function findCondensedForGame(game) {
 }
 
 function findRecapsForGame(game) {
-  const hasGameDate = Boolean(game.date);
+    hasGameDate = Boolean(game.date);
   return recaps.filter(r => {
-    const fwd = teamsMatch(r.away, r.home, game.away_team, game.home_team);
-    const rev = teamsMatch(r.away, r.home, game.home_team, game.away_team);
+    fwd = teamsMatch(r.away, r.home, game.away_team, game.home_team);
+    rev = teamsMatch(r.away, r.home, game.home_team, game.away_team);
     if (!fwd && !rev) return false;
     if (!hasGameDate) return r.dateIso === null;
     if (!r.dateIso) return false;
@@ -795,7 +816,7 @@ function getTerms() {
   return unique;
 }
 function gameMatchesFilter(game) {
-  const terms = getTerms();
+    terms = getTerms();
   if (terms.length === 0) return true;
   const hay = `${game.away_team} ${game.home_team}`.toLowerCase();
   return terms.some(t => hay.includes(t));
@@ -852,9 +873,9 @@ function renderResults() {
 
 
   // Log current filter state
-  const selectedTeam = document.getElementById('team-select').value;
+    selectedTeam = document.getElementById('team-select').value;
   console.log('[FILTER] Team filter: "' + (selectedTeam || 'none') + '" | Show TBD: ' + showTbd + ' | Show watched: ' + showWatched);
-  let totalGamesBeforeFilter = 0;
+    totalGamesBeforeFilter = 0;
   playoffs.rounds.forEach(function(r) {
     r.series.forEach(function(ser) {
       totalGamesBeforeFilter += ser.games.length;
@@ -866,15 +887,15 @@ function renderResults() {
   // Debug: Log which games are being shown/hidden for Tampa Bay filter
   if (selectedTeam === 'Tampa Bay Lightning') {
     console.log('[TAMPA DEBUG] Filtering for Tampa Bay Lightning');
-    let tampaGamesFound = 0;
+    tampaGamesFound = 0;
     playoffs.rounds.forEach(function(round) {
       round.series.forEach(function(series) {
         series.games.forEach(function(game) {
           if (game.away_team === 'Tampa Bay Lightning' || game.home_team === 'Tampa Bay Lightning') {
             tampaGamesFound++;
-            const gameKey = series.series_id + '_g' + game.game_number;
-            const isWatched = watchedSet.has(gameKey);
-            const posts720 = findPostsForGame(game);
+    gameKey = series.series_id + '_g' + game.game_number;
+    isWatched = watchedSet.has(gameKey);
+    posts720 = findPostsForGame(game);
             console.log('[TAMPA DEBUG] Game ' + game.game_number + ': ' + game.away_team + ' @ ' + game.home_team + ' - Posts: ' + posts720.length + ', Watched: ' + isWatched + ', Status: ' + game.status);
           }
         });
@@ -891,13 +912,13 @@ function renderResults() {
     return;
   }
 
-  const seasonData = gamesData.seasons.find(s => s.season === season);
+    seasonData = gamesData.seasons.find(s => s.season === season);
   if (!seasonData) {
     resultsEl.innerHTML = `<div class="placeholder"><span class="icon">⚠️</span>Season ${season} not found in games_info.json.</div>`;
     return;
   }
 
-  const playoffs = seasonData.stages.find(s => s.stage === 'playoffs');
+    playoffs = seasonData.stages.find(s => s.stage === 'playoffs');
   if (!playoffs) {
     resultsEl.innerHTML = `<div class="placeholder"><span class="icon">⚠️</span>No playoffs data for this season.</div>`;
     return;
@@ -916,7 +937,7 @@ function renderResults() {
         if (!gameMatchesFilter(game)) return;
 
         // Find matching posts — strict date matching prevents phantom links
-        const posts720   = findPostsForGame(game).filter(p => !p.isCondensed);
+    posts720 = findPostsForGame(game).filter(p => !p.isCondensed);
         const condenseds = findCondensedForGame(game);
         const gameRecaps = findRecapsForGame(game);
         const hasLinks   = posts720.length > 0 || condenseds.length > 0 || gameRecaps.length > 0;
@@ -925,8 +946,8 @@ function renderResults() {
         // OR: date is in the future and genuinely status===tbd and no posts found
         const isTbd = !hasLinks && game.status === 'tbd';
 
-        const gameKey   = `${series.series_id}_g${game.game_number}`;
-        const isWatched = watchedSet.has(gameKey);
+    gameKey = `${series.series_id}_g${game.game_number}`;
+    isWatched = watchedSet.has(gameKey);
 
         if (!showTbd && isTbd) return;
         if (!showWatched && isWatched) return;
