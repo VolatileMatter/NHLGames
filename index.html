@@ -500,6 +500,45 @@ let watchedSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
     }
   }
 
+
+  // DEBUG: Log all loaded games
+  function debugGamesData() {
+    if (!gamesData) { console.log('[DEBUG] No gamesData loaded'); return; }
+    const seasonData = gamesData.seasons.find(s => s.season === '2025-26');
+    if (!seasonData) { console.log('[DEBUG] Season 2025-26 not found'); return; }
+    const playoffs = seasonData.stages.find(s => s.stage === 'playoffs');
+    if (!playoffs) { console.log('[DEBUG] Playoffs stage not found'); return; }
+    
+    console.log('=== GAMES IN games_info.json ===');
+    let totalGames = 0;
+    playoffs.rounds.forEach(round => {
+      round.series.forEach(series => {
+        series.games.forEach(game => {
+          totalGames++;
+          console.log('  Game ' + game.game_number + ': ' + game.away_team + ' @ ' + game.home_team + ' (' + (game.date || 'TBD') + ') [' + game.status + ']');
+        });
+      });
+    });
+    console.log('Total games loaded: ' + totalGames);
+    
+    // Check for Tampa Bay games specifically
+    let tampaGames = [];
+    playoffs.rounds.forEach(round => {
+      round.series.forEach(series => {
+        series.games.forEach(game => {
+          if (game.away_team === 'Tampa Bay Lightning' || game.home_team === 'Tampa Bay Lightning') {
+            tampaGames.push(game.game_number + ': ' + game.away_team + ' @ ' + game.home_team + ' (' + game.date + ')');
+          }
+        });
+      });
+    });
+    if (tampaGames.length > 0) {
+      console.log('✓ Tampa Bay Lightning games found:', tampaGames);
+    } else {
+      console.warn('✗ No Tampa Bay Lightning games found in games_info.json!');
+    }
+  }
+
 async function init() {
   setLoaderText('Loading game schedule…');
 
@@ -510,6 +549,7 @@ async function init() {
 
   if (gamesRes.status === 'fulfilled' && gamesRes.value.ok) {
     try { gamesData = await gamesRes.value.json();
+    debugGamesData();
     debugGamesData(); }
     catch(e) { showError(`Could not parse games_info.json: ${e.message}`); }
   } else {
@@ -772,6 +812,48 @@ function renderResults() {
   // Log current filter state
   const selectedTeam = document.getElementById('team-select').value;
   console.log('[FILTER] Team filter: "' + (selectedTeam || 'none') + '" | Show TBD: ' + showTbd + ' | Show watched: ' + showWatched);
+  
+  // Count games before filter
+  let totalGamesBeforeFilter = 0;
+  if (playoffs && playoffs.rounds) {
+    playoffs.rounds.forEach(function(r) {
+      if (r.series) {
+        r.series.forEach(function(ser) {
+          if (ser.games) {
+            totalGamesBeforeFilter += ser.games.length;
+          }
+        });
+      }
+    });
+  }
+  console.log('[FILTER] Total games before filter: ' + totalGamesBeforeFilter);
+
+  
+  // Debug: Log which games are being shown/hidden for Tampa Bay filter
+  if (selectedTeam === 'Tampa Bay Lightning') {
+    console.log('[TAMPA DEBUG] Filtering for Tampa Bay Lightning');
+    let tampaGamesFound = 0;
+    playoffs.rounds.forEach(function(round) {
+      round.series.forEach(function(series) {
+        series.games.forEach(function(game) {
+          if (game.away_team === 'Tampa Bay Lightning' || game.home_team === 'Tampa Bay Lightning') {
+            tampaGamesFound++;
+            const gameKey = series.series_id + '_g' + game.game_number;
+            const isWatched = watchedSet.has(gameKey);
+            const posts720 = findPostsForGame(game);
+            console.log('[TAMPA DEBUG] Game ' + game.game_number + ': ' + game.away_team + ' @ ' + game.home_team + ' - Posts: ' + posts720.length + ', Watched: ' + isWatched + ', Status: ' + game.status);
+          }
+        });
+      });
+    });
+    console.log('[TAMPA DEBUG] Total Tampa Bay games in data: ' + tampaGamesFound);
+  }
+
+
+
+  // Log current filter state
+  const selectedTeam = document.getElementById('team-select').value;
+  console.log('[FILTER] Team filter: "' + (selectedTeam || 'none') + '" | Show TBD: ' + showTbd + ' | Show watched: ' + showWatched);
   let totalGamesBeforeFilter = 0;
   playoffs.rounds.forEach(function(r) {
     r.series.forEach(function(ser) {
@@ -779,6 +861,28 @@ function renderResults() {
     });
   });
   console.log('[FILTER] Total games before filter: ' + totalGamesBeforeFilter);
+
+  
+  // Debug: Log which games are being shown/hidden for Tampa Bay filter
+  if (selectedTeam === 'Tampa Bay Lightning') {
+    console.log('[TAMPA DEBUG] Filtering for Tampa Bay Lightning');
+    let tampaGamesFound = 0;
+    playoffs.rounds.forEach(function(round) {
+      round.series.forEach(function(series) {
+        series.games.forEach(function(game) {
+          if (game.away_team === 'Tampa Bay Lightning' || game.home_team === 'Tampa Bay Lightning') {
+            tampaGamesFound++;
+            const gameKey = series.series_id + '_g' + game.game_number;
+            const isWatched = watchedSet.has(gameKey);
+            const posts720 = findPostsForGame(game);
+            console.log('[TAMPA DEBUG] Game ' + game.game_number + ': ' + game.away_team + ' @ ' + game.home_team + ' - Posts: ' + posts720.length + ', Watched: ' + isWatched + ', Status: ' + game.status);
+          }
+        });
+      });
+    });
+    console.log('[TAMPA DEBUG] Total Tampa Bay games in data: ' + tampaGamesFound);
+  }
+
 
   const season      = document.getElementById('season-select').value;
 
