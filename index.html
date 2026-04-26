@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>720pier NHL Filter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #0b0e14;
+      --surface:  #12161f;
+      --border:   #1e2536;
+      --ice:      #c8dff0;
+      --ice-dim:  #6d9ab5;
+      --gold:     #e8c94a;
+      --gold-dim: #7a6820;
+      --text:     #dce6f0;
+      --muted:    #4a5a6e;
+      --radius:   4px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* HEADER */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 2.5rem 1.5rem;
+      display: flex;
+      align-items: flex-end;
+      gap: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent, transparent 60px,
+        rgba(200,223,240,0.02) 60px,
+        rgba(200,223,240,0.02) 61px
+      );
+      pointer-events: none;
+    }
+    .site-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      color: var(--ice);
+    }
+    .site-title span { color: var(--gold); }
+    .site-subtitle {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding-bottom: 0.25rem;
+    }
+
+    /* MAIN */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 2rem 4rem;
+    }
+
+    /* LOADER */
+    #loader {
+      text-align: center;
+      padding: 3rem 1rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+    #loader .spinner {
+      display: inline-block;
+      width: 24px; height: 24px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* APP */
+    #app { display: none; }
+
+    /* CONTROLS */
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      align-items: end;
+    }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    select, input[type="text"] {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.95rem;
+      padding: 0.6rem 0.9rem;
+      transition: border-color 0.15s;
+      width: 100%;
+      appearance: none;
+    }
+    select:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--ice-dim);
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a5a6e' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.9rem center;
+      padding-right: 2.5rem;
+      cursor: pointer;
+    }
+
+    .row-options {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-size: 0.82rem;
+      color: var(--ice-dim);
+      user-select: none;
+    }
+    .toggle-label input[type="checkbox"] {
+      accent-color: var(--gold);
+      width: 14px; height: 14px;
+      cursor: pointer;
+    }
+
+    /* STATUS BAR */
+    .status-bar {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding: 0.5rem 0;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .status-bar .count { color: var(--gold); font-weight: 600; }
+
+    /* RESULTS */
+    #results {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--ice-dim);
+      border-radius: var(--radius);
+      padding: 0.7rem 1rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.75rem;
+      align-items: center;
+      animation: fadeIn 0.18s ease both;
+      transition: border-color 0.12s, background 0.12s;
+    }
+    .result-card:hover {
+      border-left-color: var(--gold);
+      background: #161b27;
+    }
+    .result-card.condensed {
+      border-left-color: var(--muted);
+      opacity: 0.65;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-title { line-height: 1.4; }
+    .result-title .matchup {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ice);
+    }
+    .result-title .meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.67rem;
+      color: var(--muted);
+      margin-top: 0.12rem;
+    }
+
+    .result-link {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.67rem;
+      letter-spacing: 0.06em;
+      color: var(--gold);
+      text-decoration: none;
+      white-space: nowrap;
+      padding: 0.25rem 0.65rem;
+      border: 1px solid var(--gold-dim);
+      border-radius: var(--radius);
+      transition: background 0.12s, color 0.12s;
+    }
+    .result-link:hover {
+      background: var(--gold);
+      color: #0b0e14;
+    }
+
+    /* EMPTY STATE */
+    .placeholder {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    .placeholder .icon {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: 0.75rem;
+      opacity: 0.4;
+    }
+
+    /* ERROR */
+    .error-box {
+      background: #1f1218;
+      border: 1px solid #5a2030;
+      border-left: 3px solid #d94f4f;
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: #e07070;
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1rem 2.5rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--ice-dim); }
+
+    @media (max-width: 600px) {
+      header { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+      .controls { grid-template-columns: 1fr; }
+      main { padding: 1.5rem 1rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="site-title">720pier <span>NHL</span> Filter</div>
+  </div>
+  <div class="site-subtitle">Auto-loads all saved forum pages · deduplicates · filters by team</div>
+</header>
+
+<main>
+
+  <div id="loader">
+    <div class="spinner"></div>
+    <div id="loader-text">Loading html_list.json…</div>
+  </div>
+
+  <div id="app">
+
+    <div id="error-area"></div>
+
+    <div class="controls">
+      <div class="field-group">
+        <label for="team-select">Filter by team</label>
+        <select id="team-select">
+          <option value="">— Show all games —</option>
+          <optgroup label="Atlantic Division">
+            <option value="Boston Bruins">Boston Bruins</option>
+            <option value="Buffalo Sabres">Buffalo Sabres</option>
+            <option value="Detroit Red Wings">Detroit Red Wings</option>
+            <option value="Florida Panthers">Florida Panthers</option>
+            <option value="Montréal Canadiens|Montreal Canadiens">Montréal Canadiens</option>
+            <option value="Ottawa Senators">Ottawa Senators</option>
+            <option value="Tampa Bay Lightning" selected>Tampa Bay Lightning</option>
+            <option value="Toronto Maple Leafs">Toronto Maple Leafs</option>
+          </optgroup>
+          <optgroup label="Metropolitan Division">
+            <option value="Carolina Hurricanes">Carolina Hurricanes</option>
+            <option value="Columbus Blue Jackets">Columbus Blue Jackets</option>
+            <option value="New Jersey Devils">New Jersey Devils</option>
+            <option value="New York Islanders">New York Islanders</option>
+            <option value="New York Rangers">New York Rangers</option>
+            <option value="Philadelphia Flyers">Philadelphia Flyers</option>
+            <option value="Pittsburgh Penguins">Pittsburgh Penguins</option>
+            <option value="Washington Capitals">Washington Capitals</option>
+          </optgroup>
+          <optgroup label="Central Division">
+            <option value="Chicago Blackhawks">Chicago Blackhawks</option>
+            <option value="Colorado Avalanche">Colorado Avalanche</option>
+            <option value="Dallas Stars">Dallas Stars</option>
+            <option value="Minnesota Wild">Minnesota Wild</option>
+            <option value="Nashville Predators">Nashville Predators</option>
+            <option value="St. Louis Blues">St. Louis Blues</option>
+            <option value="Utah Mammoth">Utah Mammoth</option>
+            <option value="Winnipeg Jets">Winnipeg Jets</option>
+          </optgroup>
+          <optgroup label="Pacific Division">
+            <option value="Anaheim Ducks">Anaheim Ducks</option>
+            <option value="Calgary Flames">Calgary Flames</option>
+            <option value="Edmonton Oilers">Edmonton Oilers</option>
+            <option value="Los Angeles Kings">Los Angeles Kings</option>
+            <option value="San Jose Sharks">San Jose Sharks</option>
+            <option value="Seattle Kraken">Seattle Kraken</option>
+            <option value="Vancouver Canucks">Vancouver Canucks</option>
+            <option value="Vegas Golden Knights">Vegas Golden Knights</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="field-group">
+        <label for="custom-filter">Or type a custom filter</label>
+        <input type="text" id="custom-filter" placeholder="e.g. Oilers, Round 2, 4k…" />
+      </div>
+    </div>
+
+    <div class="row-options">
+      <label class="toggle-label">
+        <input type="checkbox" id="toggle-condensed" />
+        Include condensed game posts
+      </label>
+    </div>
+
+    <div class="status-bar">
+      <span id="status-text">—</span>
+      <span id="status-count" class="count"></span>
+    </div>
+
+    <div id="results">
+      <div class="placeholder">
+        <span class="icon">🏒</span>
+        Select a team above to begin filtering.
+      </div>
+    </div>
+
+  </div><!-- /#app -->
+</main>
+
+<footer>
+  <span>720pier NHL Filter</span>
+  <span>
+    Game content © respective broadcasters &amp; the NHL.
+    <a href="https://720pier.ru" target="_blank" rel="noopener">720pier.ru</a> is an independent third-party site.
+    This tool links to existing posts only and does not host or distribute any content.
+  </span>
+</footer>
+
+<script>
+  const BASE_URL  = 'https://720pier.ru/';
+  const LIST_FILE = 'html_list.json';
+
+  const seenTopics = new Set();
+  let allEntries   = [];
+  let loadedFiles  = 0;
+
+  // ── Boot: fetch file list then load all HTML files in parallel ──────────────
+  async function init() {
+    setLoaderText('Loading html_list.json…');
+    let fileList;
+    try {
+      const res = await fetch(LIST_FILE);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      fileList = await res.json();
+    } catch (err) {
+      showError(
+        `Could not load <code>html_list.json</code>: ${err.message}<br>` +
+        `Make sure the file exists and you are serving this from a web server (not <code>file://</code>).` +
+        `<br>Run <code>python generate_html_list.py</code> in the repo root to regenerate it.`
+      );
+      showApp();
+      return;
+    }
+
+    if (!Array.isArray(fileList) || fileList.length === 0) {
+      showError(
+        '<code>html_list.json</code> is empty. ' +
+        'Save some 720pier forum HTML files into <code>/html/</code> and run ' +
+        '<code>python generate_html_list.py</code>.'
+      );
+      showApp();
+      return;
+    }
+
+    setLoaderText(`Parsing ${fileList.length} saved forum page(s)…`);
+    await Promise.allSettled(fileList.map(f => loadHtmlFile(f)));
+    loadedFiles = fileList.length;
+
+    showApp();
+    renderResults();
+  }
+
+  // ── Fetch and parse one HTML file ──────────────────────────────────────────
+  async function loadHtmlFile(filename) {
+    try {
+      const res = await fetch(`html/${filename}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
+
+      const parser = new DOMParser();
+      const doc    = parser.parseFromString(text, 'text/html');
+
+      doc.querySelectorAll('a.topictitle').forEach(a => {
+        const rawHref = a.getAttribute('href') || '';
+        const href    = rawHref.startsWith('http')
+          ? rawHref
+          : BASE_URL + rawHref.replace(/^\.\//, '');
+
+        // Deduplicate by topic ID
+        const topicMatch = href.match(/[?&]t=(\d+)/);
+        const topicId    = topicMatch ? topicMatch[1] : href;
+        if (seenTopics.has(topicId)) return;
+        seenTopics.add(topicId);
+
+        const title       = a.textContent.trim();
+        const isCondensed = /condensed/i.test(title);
+        allEntries.push({ title, href, isCondensed });
+      });
+    } catch (err) {
+      console.warn(`Skipping ${filename}: ${err.message}`);
+    }
+  }
+
+  // ── Filter and render results ───────────────────────────────────────────────
+  function renderResults() {
+    const teamRaw       = document.getElementById('team-select').value;
+    const customRaw     = document.getElementById('custom-filter').value.trim();
+    const showCondensed = document.getElementById('toggle-condensed').checked;
+
+    // Team dropdown supports pipe-separated aliases (e.g. accented + plain spelling)
+    const terms = [];
+    if (teamRaw)   teamRaw.split('|').forEach(t => terms.push(t.toLowerCase()));
+    if (customRaw) terms.push(customRaw.toLowerCase());
+
+    let filtered = allEntries.filter(e => {
+      if (!showCondensed && e.isCondensed) return false;
+      if (terms.length === 0) return true;
+      const lower = e.title.toLowerCase();
+      return terms.some(t => lower.includes(t));
+    });
+
+    // Sort newest first using DD.MM.YYYY date embedded in titles
+    filtered.sort((a, b) => extractDate(b.title) - extractDate(a.title));
+
+    const resultsEl   = document.getElementById('results');
+    const statusText  = document.getElementById('status-text');
+    const statusCount = document.getElementById('status-count');
+
+    const filterLabel = teamRaw
+      ? (document.querySelector(`#team-select option[value="${CSS.escape(teamRaw)}"]`)?.textContent || teamRaw)
+      : (customRaw || 'all games');
+
+    statusText.textContent  =
+      `${filterLabel} · ${loadedFiles} file(s) loaded · ${allEntries.length} unique posts indexed`;
+    statusCount.textContent =
+      `${filtered.length} match${filtered.length !== 1 ? 'es' : ''}`;
+
+    if (filtered.length === 0) {
+      resultsEl.innerHTML = `
+        <div class="placeholder">
+          <span class="icon">🔍</span>
+          No posts found for <strong>${escHtml(filterLabel)}</strong>.<br>
+          Try adjusting your filter or add more HTML files to <code>/html/</code>.
+        </div>`;
+      return;
+    }
+
+    resultsEl.innerHTML = '';
+    filtered.forEach((entry, i) => {
+      const { matchup, context, meta } = parseTitle(entry.title);
+      const card = document.createElement('div');
+      card.className = 'result-card' + (entry.isCondensed ? ' condensed' : '');
+      card.style.animationDelay = `${Math.min(i * 15, 250)}ms`;
+      card.innerHTML = `
+        <div class="result-title">
+          <div class="matchup">${escHtml(matchup)}</div>
+          <div class="meta">${escHtml(context)}${meta ? ' · ' + escHtml(meta) : ''}</div>
+        </div>
+        <a class="result-link" href="${escHtml(entry.href)}" target="_blank" rel="noopener">Open ↗</a>
+      `;
+      resultsEl.appendChild(card);
+    });
+  }
+
+  // ── Parse a 720pier title into display components ──────────────────────────
+  // Format: "NHL SC 2026 / Round 1 / Game 3 / 24.04.2026 / Team A @ Team B [Hockey, …]"
+  function parseTitle(title) {
+    const bracketIdx = title.lastIndexOf('[');
+    const meta       = bracketIdx >= 0 ? title.slice(bracketIdx) : '';
+    const body       = bracketIdx >= 0 ? title.slice(0, bracketIdx).trim() : title;
+    const parts      = body.split('/').map(s => s.trim()).filter(Boolean);
+    const matchup    = parts.length >= 2 ? parts[parts.length - 1] : body;
+    const context    = parts.length >= 2 ? parts.slice(0, -1).join(' · ') : '';
+    return { matchup, context, meta };
+  }
+
+  // ── Extract DD.MM.YYYY as timestamp for sorting ─────────────────────────────
+  function extractDate(title) {
+    const m = title.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+    if (!m) return 0;
+    return new Date(`${m[3]}-${m[2]}-${m[1]}`).getTime();
+  }
+
+  // ── Escape HTML special chars ───────────────────────────────────────────────
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function setLoaderText(msg) {
+    document.getElementById('loader-text').textContent = msg;
+  }
+
+  function showApp() {
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('app').style.display    = 'block';
+  }
+
+  function showError(html) {
+    document.getElementById('error-area').innerHTML =
+      `<div class="error-box">${html}</div>`;
+  }
+
+  // ── Wire up controls ────────────────────────────────────────────────────────
+  document.getElementById('team-select').addEventListener('change', () => {
+    document.getElementById('custom-filter').value = '';
+    renderResults();
+  });
+  document.getElementById('custom-filter').addEventListener('input', () => {
+    document.getElementById('team-select').value = 'Tampa Bay Lightning';
+    // Clear team select when typing custom
+    document.getElementById('team-select').value = '';
+    renderResults();
+  });
+  document.getElementById('toggle-condensed').addEventListener('change', renderResults);
+
+  init();
+</script>
+
+</body>
+</html>

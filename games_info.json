@@ -1,0 +1,255 @@
+{
+  "_meta": {
+    "generated_at": "2026-04-26T04:08:23Z",
+    "description": "NHL game index for 720pier NHL Filter. Contains confirmed played games (status: confirmed) and placeholder entries for unplayed or not-yet-posted games (status: tbd). A game is marked confirmed if any 720pier post is known to exist for it. Regenerate this file as the season progresses.",
+    "seasons_included": ["2025-26"],
+    "notes": "To add 2026-27 season, append a new object to the 'seasons' array following the same structure."
+  },
+  "seasons": [
+    {
+      "season": "2025-26",
+      "stages": [
+        {
+          "stage": "regular_season",
+          "note": "Regular season entries to be added when regular season forum pages are collected.",
+          "games": []
+        },
+        {
+          "stage": "playoffs",
+          "rounds": [
+            {
+              "round": 1,
+              "round_label": "First Round",
+              "series": [
+                {
+                  "series_id": "E1",
+                  "conference": "Eastern",
+                  "away_team": "Tampa Bay Lightning",
+                  "home_team": "Montréal Canadiens",
+                  "games": [
+                    { "game_number": 1, "date": "2026-04-19", "away_team": "Tampa Bay Lightning", "home_team": "Montréal Canadiens", "status": "confirmed" },
+                    { "game_number": 2, "date": "2026-04-21", "away_team": "Montréal Canadiens", "home_team": "Tampa Bay Lightning", "status": "confirmed" },
+                    { "game_number": 3, "date": "2026-04-24", "away_team": "Tampa Bay Lightning", "home_team": "Montréal Canadiens", "status": "confirmed" },
+                    { "game_number": 4, "date": "2026-04-26", "away_team": "Montréal Canadiens", "home_team": "Tampa Bay Lightning", "status": "tbd" },
+                    { "game_number": 5, "date": null, "away_team": "Tampa Bay Lightning", "home_team": "Montréal Canadiens", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "Montréal Canadiens", "home_team": "Tampa Bay Lightning", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "Tampa Bay Lightning", "home_team": "Montréal Canadiens", "status": "tbd" }
+                  ]
+                },
+                {
+                  "series_id": "E2",
+                  "conference": "Eastern",
+                  "away_team": "Carolina Hurricanes",
+                  "home_team": "Ottawa Senators",
+                  "games": [
+                    { "game_number": 1, "date": "2026-04-19", "away_team": "Carolina Hurricanes", "home_team": "Ottawa Senators", "status": "confirmed" },
+                    { "game_number": 2, "date": "2026-04-21", "away_team": "Carolina Hurricanes", "home_team": "Ottawa Senators", "status": "confirmed" },
+                    { "game_number": 3, "date": "2026-04-23", "away_team": "Carolina Hurricanes", "home_team": "Ottawa Senators", "status": "confirmed" },
+                    { "game_number": 4, "date": "2026-04-25", "away_team": "Carolina Hurricanes", "home_team": "Ottawa Senators", "status": "confirmed" },
+                    { "game_number": 5, "date": null, "away_team": "Carolina Hurricanes", "home_team": "Ottawa Senators", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "Ottawa Senators", "home_team": "Carolina Hurricanes", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "Carolina Hurricanes", "home_team": "Ottawa Senators", "status": "tbd" }
+                  ]
+                },
+                {
+                  "series_id": "E3",
+                  "conference": "Eastern",
+                  "away_team": "Buffalo Sabres",
+                  "home_team": "Boston Bruins",
+                  "games": [
+                    { "game_number": 1, "date": "2026-04-19", "away_team": "Buffalo Sabres", "home_team": "Boston Bruins", "status": "confirmed" },
+                    { "game_number": 2, "date": "2026-04-21", "away_team": "Buffalo Sabres", "home_team": "Boston Bruins", "status": "confirmed" },
+                    { "game_number": 3, "date": "2026-04-23", "away_team": "Buffalo Sabres", "home_team": "Boston Bruins", "status": "confirmed" },
+                    { "game_number": 4, "date": "2026-04-25", "away_team": "Buffalo Sabres", "home_team": "Boston Bruins", "status": "confirmed" },
+                    { "game_number": 5, "date": null, "away_team": "Buffalo Sabres", "home_team": "Boston Bruins", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "Boston Bruins", "home_team": "Buffalo Sabres", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "Buffalo Sabres", "home_team": "Boston Bruins", "status": "tbd" }
+                  ]
+                },
+                {
+                  "series_id": "E4",
+                  "conference": "Eastern",
+                  "away_team": "Pittsburgh Penguins",
+                  "home_team": "Philadelphia Flyers",
+                  "games": [
+                    { "game_number": 1, "date": "2026-04-19", "away_team": "Pittsburgh Penguins", "home_team": "Philadelphia Flyers", "status": "confirmed" },
+                    { "game_number": 2, "date": "2026-04-21", "away_team": "Pittsburgh Penguins", "home_team": "Philadelphia Flyers", "status": "confirmed" },
+                    { "game_number": 3, "date": "2026-04-23", "away_team": "Pittsburgh Penguins", "home_team": "Philadelphia Flyers", "status": "confirmed" },
+                    { "game_number": 4, "date": "2026-04-25", "away_team": "Pittsburgh Penguins", "home_team": "Philadelphia Flyers", "status": "confirmed" },
+                    { "game_number": 5, "date": null, "away_team": "Pittsburgh Penguins", "home_team": "Philadelphia Flyers", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "Philadelphia Flyers", "home_team": "Pittsburgh Penguins", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "Pittsburgh Penguins", "home_team": "Philadelphia Flyers", "status": "tbd" }
+                  ]
+                },
+                {
+                  "series_id": "W1",
+                  "conference": "Western",
+                  "away_team": "Edmonton Oilers",
+                  "home_team": "Anaheim Ducks",
+                  "games": [
+                    { "game_number": 1, "date": "2026-04-19", "away_team": "Edmonton Oilers", "home_team": "Anaheim Ducks", "status": "confirmed" },
+                    { "game_number": 2, "date": "2026-04-22", "away_team": "Anaheim Ducks", "home_team": "Edmonton Oilers", "status": "confirmed" },
+                    { "game_number": 3, "date": "2026-04-24", "away_team": "Edmonton Oilers", "home_team": "Anaheim Ducks", "status": "confirmed" },
+                    { "game_number": 4, "date": "2026-04-26", "away_team": "Anaheim Ducks", "home_team": "Edmonton Oilers", "status": "tbd" },
+                    { "game_number": 5, "date": null, "away_team": "Edmonton Oilers", "home_team": "Anaheim Ducks", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "Anaheim Ducks", "home_team": "Edmonton Oilers", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "Edmonton Oilers", "home_team": "Anaheim Ducks", "status": "tbd" }
+                  ]
+                },
+                {
+                  "series_id": "W2",
+                  "conference": "Western",
+                  "away_team": "Vegas Golden Knights",
+                  "home_team": "Utah Mammoth",
+                  "games": [
+                    { "game_number": 1, "date": "2026-04-19", "away_team": "Vegas Golden Knights", "home_team": "Utah Mammoth", "status": "confirmed" },
+                    { "game_number": 2, "date": "2026-04-21", "away_team": "Vegas Golden Knights", "home_team": "Utah Mammoth", "status": "confirmed" },
+                    { "game_number": 3, "date": "2026-04-24", "away_team": "Vegas Golden Knights", "home_team": "Utah Mammoth", "status": "confirmed" },
+                    { "game_number": 4, "date": "2026-04-26", "away_team": "Vegas Golden Knights", "home_team": "Utah Mammoth", "status": "tbd" },
+                    { "game_number": 5, "date": null, "away_team": "Utah Mammoth", "home_team": "Vegas Golden Knights", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "Vegas Golden Knights", "home_team": "Utah Mammoth", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "Utah Mammoth", "home_team": "Vegas Golden Knights", "status": "tbd" }
+                  ]
+                },
+                {
+                  "series_id": "W3",
+                  "conference": "Western",
+                  "away_team": "Colorado Avalanche",
+                  "home_team": "Los Angeles Kings",
+                  "games": [
+                    { "game_number": 1, "date": "2026-04-19", "away_team": "Colorado Avalanche", "home_team": "Los Angeles Kings", "status": "confirmed" },
+                    { "game_number": 2, "date": "2026-04-21", "away_team": "Colorado Avalanche", "home_team": "Los Angeles Kings", "status": "confirmed" },
+                    { "game_number": 3, "date": "2026-04-23", "away_team": "Colorado Avalanche", "home_team": "Los Angeles Kings", "status": "confirmed" },
+                    { "game_number": 4, "date": "2026-04-25", "away_team": "Colorado Avalanche", "home_team": "Los Angeles Kings", "status": "confirmed" },
+                    { "game_number": 5, "date": null, "away_team": "Colorado Avalanche", "home_team": "Los Angeles Kings", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "Los Angeles Kings", "home_team": "Colorado Avalanche", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "Colorado Avalanche", "home_team": "Los Angeles Kings", "status": "tbd" }
+                  ]
+                },
+                {
+                  "series_id": "W4",
+                  "conference": "Western",
+                  "away_team": "TBD",
+                  "home_team": "TBD",
+                  "note": "8th Western playoff series — teams to be confirmed.",
+                  "games": [
+                    { "game_number": 1, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 2, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 3, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 4, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 5, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" }
+                  ]
+                }
+              ]
+            },
+            {
+              "round": 2,
+              "round_label": "Second Round",
+              "note": "Matchups determined after Round 1 concludes.",
+              "series": [
+                {
+                  "series_id": "E5", "conference": "Eastern", "away_team": "TBD", "home_team": "TBD",
+                  "games": [
+                    { "game_number": 1, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 2, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 3, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 4, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 5, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" }
+                  ]
+                },
+                {
+                  "series_id": "E6", "conference": "Eastern", "away_team": "TBD", "home_team": "TBD",
+                  "games": [
+                    { "game_number": 1, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 2, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 3, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 4, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 5, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" }
+                  ]
+                },
+                {
+                  "series_id": "W5", "conference": "Western", "away_team": "TBD", "home_team": "TBD",
+                  "games": [
+                    { "game_number": 1, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 2, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 3, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 4, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 5, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" }
+                  ]
+                },
+                {
+                  "series_id": "W6", "conference": "Western", "away_team": "TBD", "home_team": "TBD",
+                  "games": [
+                    { "game_number": 1, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 2, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 3, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 4, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 5, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" }
+                  ]
+                }
+              ]
+            },
+            {
+              "round": 3,
+              "round_label": "Conference Finals",
+              "series": [
+                {
+                  "series_id": "E7", "conference": "Eastern", "away_team": "TBD", "home_team": "TBD",
+                  "games": [
+                    { "game_number": 1, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 2, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 3, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 4, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 5, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" }
+                  ]
+                },
+                {
+                  "series_id": "W7", "conference": "Western", "away_team": "TBD", "home_team": "TBD",
+                  "games": [
+                    { "game_number": 1, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 2, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 3, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 4, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 5, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" }
+                  ]
+                }
+              ]
+            },
+            {
+              "round": 4,
+              "round_label": "Stanley Cup Finals",
+              "series": [
+                {
+                  "series_id": "SCF", "conference": "Finals", "away_team": "TBD", "home_team": "TBD",
+                  "games": [
+                    { "game_number": 1, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 2, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 3, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 4, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 5, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 6, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" },
+                    { "game_number": 7, "date": null, "away_team": "TBD", "home_team": "TBD", "status": "tbd" }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
